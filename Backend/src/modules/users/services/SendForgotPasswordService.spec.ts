@@ -30,6 +30,7 @@ describe('SendForgotPasswordEmail', () => {
       name: 'John Doe',
       email: 'johndoe@test.com',
       password: '123456',
+      isBarber: true,
     });
 
     await sendForgotPasswordEmail.execute({
@@ -54,6 +55,7 @@ describe('SendForgotPasswordEmail', () => {
       name: 'John Doe',
       email: 'johndoe@test.com',
       password: '123456',
+      isBarber: false,
     });
 
     await sendForgotPasswordEmail.execute({

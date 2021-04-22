@@ -1,8 +1,12 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { shade } from 'polished';
 
 import ArrowLeftIcon from '../../assets/ArrowLeftIcon.svg';
 import ArrowRightIcon from '../../assets/ArrowRightIcon.svg';
+
+interface Visible {
+  isVisible: boolean;
+}
 
 export const Container = styled.div``;
 
@@ -62,7 +66,7 @@ export const Profile = styled.div`
     }
 
     a {
-      text-decoration: none;
+      text-decoration: flex;
       color: #ff9000;
     }
 
@@ -96,82 +100,66 @@ export const Content = styled.main`
     padding: 10px 20px;
     color: #fff;
   }
-`;
 
-export const Service = styled.div`
-  width: 100%;
-  flex: 1;
-  padding: 15px 15px;
-  background: #28262e;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: opacity 0.4s;
-  margin-bottom: 20px;
+  button {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.35rem;
+    color: #eee;
+    transition: all 0.35s;
+    background: transparent;
+    border: 1px solid #ff9000;
+    transform: translate(0);
 
-  &:hover {
-    opacity: 0.8;
-  }
+    &:after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background: #ff9000;
+      transition: all 1.35s;
+      z-index: -1;
+      border-radius: 8px;
+    }
 
-  h1 {
-    color: #fff;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    display: flex;
+    &:hover {
+      background: none;
+    }
 
-    svg {
-      margin-left: auto;
+    &:hover:after {
+      width: 100%;
     }
   }
 `;
 
-export const ServiceList = styled.li`
-  display: flex;
+export const ServiceList = styled.li<Visible>`
+  display: none;
   flex-direction: column;
   padding: 10px 20px;
-  display: none;
+
+  ${props =>
+    props.isVisible &&
+    css`
+      display: flex;
+    `}
 `;
 
-export const CalendarSelectDate = styled.div`
-  width: 100%;
-  flex: 1;
-  padding: 15px 15px;
-  background: #28262e;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: opacity 0.4s;
-  margin-bottom: 20px;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  h1 {
-    color: #fff;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    display: flex;
-
-    svg {
-      margin-left: auto;
-    }
-  }
-`;
-
-export const DateAndHour = styled.div`
+export const DateAndHour = styled.div<Visible>`
   flex-wrap: wrap;
-  display: flex;
+  display: none;
   width: 100%;
+
+  ${props =>
+    props.isVisible &&
+    css`
+      display: flex;
+    `}
 `;
 
 export const Hour = styled.div`
   width: 60%;
-  display: none;
 
   h2 {
     color: #fff;
@@ -179,34 +167,35 @@ export const Hour = styled.div`
 `;
 
 export const HourList = styled.div`
-  display: none;
   ul {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(7, 2fr);
+    grid-template-columns: repeat(3, 2fr);
     margin-left: 15px;
-  }
-  li {
-    padding: 10px 20px;
-    background: #28262e;
-    margin: 10px auto;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background 0.4s;
+    width: 300px;
 
-    &:hover {
-      background: #ff9000;
+    li {
+      padding: 10px 20px;
+      background: #28262e;
+      margin: 10px auto;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.4s;
+
+      &:hover {
+        background: #ff9000;
+      }
     }
   }
 `;
 
 export const Calendar = styled.aside`
-  display: none;
-  /* display: flex; */
+  display: flex;
   width: 380px;
   margin-left: auto;
   margin-bottom: 20px;
+  margin-top: 10px;
 
   .DayPicker {
     border-radius: 0.6rem;
@@ -293,36 +282,14 @@ export const Calendar = styled.aside`
   }
 `;
 
-export const Barber = styled.div`
+export const BarberList = styled.div<Visible>`
+  display: none;
+  margin-top: 10px;
   width: 100%;
-  flex: 1;
-  padding: 15px 15px;
-  background: #28262e;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: opacity 0.4s;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  h1 {
-    color: #fff;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    display: flex;
-
-    svg {
-      margin-left: auto;
-    }
-  }
-`;
-
-export const BarberList = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 10px 20px;
+  ${props =>
+    props.isVisible &&
+    css`
+      display: flex;
+    `}
 `;

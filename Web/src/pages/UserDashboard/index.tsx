@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { format, parseISO } from 'date-fns';
 import DayPicker, { DayModifiers } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -9,27 +16,38 @@ import {
   AiOutlinePoweroff,
   AiOutlineUser,
 } from 'react-icons/ai';
+
 import { Link } from 'react-router-dom';
+import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
+
+import { Form } from '@unform/web';
+import { useAuth } from '../../hooks/auth';
+import api from '../../services/api';
+
+import { useToast } from '../../hooks/toast';
+
 import {
   Container,
   Header,
   HeaderContent,
   Profile,
   Content,
-  Service,
   ServiceList,
-  CalendarSelectDate,
   DateAndHour,
   Hour,
-  HourList,
   Calendar,
-  Barber,
   BarberList,
 } from './styles';
 
 import logo from '../../assets/logo.svg';
-import { useAuth } from '../../hooks/auth';
-import api from '../../services/api';
+
+import BarberSelection from '../../components/BarberSelection';
+import AppointmentSelection from '../../components/AppointmentSelection';
+import Button from '../../components/Button';
+import HoursSelection from '../../components/HoursSelection';
+import getValidationErrors from '../../utils/getValidationErrors';
+import Input from '../../components/Input';
 
 interface MonthAvailabilityItem {
   day: number;
@@ -44,13 +62,22 @@ interface Appointment {
 }
 
 interface Barbers {
+  id: string;
   name: string;
   isBarber: boolean;
   avatar_url: string;
 }
 
+interface AppointmentFormData {
+  provider_id: string;
+  service: string;
+  date: string;
+}
+
 const UserDashboard: React.FC = () => {
   const { signOut, user } = useAuth();
+  const formRef = useRef<FormHandles>(null);
+  const { addToast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -58,8 +85,55 @@ const UserDashboard: React.FC = () => {
     MonthAvailabilityItem[]
   >([]);
 
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
+
+  const [serviceVisible, setServiceVisible] = useState(false);
+  const [calendarVisible, setCalendarVisible] = useState(false);
+  const [barberVisible, setBarberVisible] = useState(false);
+
+  const handleSubmit = useCallback(
+    async (data: AppointmentFormData) => {
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          service: Yup.string().required('Selecione um serviço.'),
+          date: Yup.string().required('Informe uma data.'),
+          provider_id: Yup.string().required(),
+        });
+
+        console.log(data.provider_id);
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        await api.post('/appointments', data);
+
+        addToast({
+          type: 'success',
+          title: 'teste',
+          description: 'Dapadale na narguila!',
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+        addToast({
+          type: 'error',
+          title: 'Erro ao confirmar agendamento',
+          description:
+            'Ocorreu um erro ao fazer o agendamento, verifique os dados!',
+        });
+      }
+    },
+    [addToast],
+  );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
     if (modifiers.available && !modifiers.disabled) {
@@ -84,11 +158,18 @@ const UserDashboard: React.FC = () => {
       });
   }, [currentMonth, user.id]);
 
-  // useEffect(() => {
-  //   api.get('/providers').then(response => {
-  //     setBarbers(response.data);
-  //   });
-  // }, []);
+  useEffect(() => {
+    api.get<Barbers[]>('/providers').then(response => {
+      const showBarbers = response.data
+        .filter(barber => barber.isBarber)
+        .map(barber => {
+          return {
+            ...barber,
+          };
+        });
+      setBarbers(showBarbers);
+    });
+  }, []);
 
   useEffect(() => {
     api
@@ -123,37 +204,13 @@ const UserDashboard: React.FC = () => {
     return dates;
   }, [currentMonth, monthAvailability]);
 
-  // const selectedDateAsText = useMemo(() => {
-  //   return format(selectedDate, "'Dia' dd 'de' MMMM", {
-  //     locale: ptBR,
-  //   });
-  // }, [selectedDate]);
-
-  // const selectedWeekDay = useMemo(() => {
-  //   return format(selectedDate, 'cccc', {
-  //     locale: ptBR,
-  //   });
-  // }, [selectedDate]);
-
-  const listBarbers = useMemo(() => {
-    const barberList = barbers
-      .filter(barber => barber.isBarber === true)
-      .map(barber => {
-        const { name } = barber;
-
-        return name;
-      });
-
-    return barberList;
-  }, [barbers]);
-
   return (
     <Container>
       <Header>
         <HeaderContent>
           <img src={logo} alt="GoBarber" />
 
-          <Profile>
+          <Profile key={user.id}>
             {user.avatar_url ? (
               <img src={user.avatar_url} alt={user.name} />
             ) : (
@@ -172,7 +229,7 @@ const UserDashboard: React.FC = () => {
             </div>
           </Profile>
 
-          <button style={{ marginRight: -400 }} type="button">
+          <button style={{ marginRight: -450 }} type="button">
             <Link to="/profile">
               <AiOutlineUser />
             </Link>
@@ -184,93 +241,86 @@ const UserDashboard: React.FC = () => {
         </HeaderContent>
       </Header>
 
-      <Content>
-        <Service>
-          <h1>
-            Selecione o tipo de serviço <AiOutlineArrowDown />
-          </h1>
-        </Service>
-        <ServiceList>
-          <span>teste1</span>
-          <span>teste1</span>
-        </ServiceList>
-        <CalendarSelectDate>
-          <h1>
-            Escolha a data e horário que deseja marcar <AiOutlineArrowDown />
-          </h1>
-        </CalendarSelectDate>
-        <DateAndHour>
-          <Hour className="date-and-hour">
-            <h2>Horários disponíveis :</h2>
-            <HourList>
-              <ul>
-                <li>08:00</li>
-                <li>09:00</li>
-                <li>10:00</li>
-                <li>11:00</li>
-                <li>12:00</li>
-                <li>14:00</li>
-                <li>15:00</li>
-                <li>16:00</li>
-                <li>17:00</li>
-                <li>18:00</li>
-                <li>19:00</li>
-                <li>20:00</li>
-                <li>21:00</li>
-                <li>22:00</li>
-              </ul>
-            </HourList>
-          </Hour>
+      <Form ref={formRef} onSubmit={handleSubmit}>
+        <Content>
+          <AppointmentSelection
+            title="Selecione o tipo de serviço"
+            icon={AiOutlineArrowDown}
+            onClick={() => setServiceVisible(!serviceVisible)}
+          />
+          <ServiceList isVisible={serviceVisible}>
+            <Input name="service" />
+          </ServiceList>
+          <AppointmentSelection
+            title="Escolha o horário e a data que deseja marcar"
+            icon={AiOutlineArrowDown}
+            onClick={() => setCalendarVisible(!calendarVisible)}
+          />
+          <DateAndHour isVisible={calendarVisible}>
+            <Hour className="date-and-hour">
+              <h2>Horários disponíveis :</h2>
+              <HoursSelection hour="08:00" />
+              <HoursSelection hour="09:00" />
+              <HoursSelection hour="10:00" />
+              <HoursSelection hour="11:00" />
+              <HoursSelection hour="12:00" />
+              <HoursSelection hour="13:00" />
+              <HoursSelection hour="14:00" />
+              <HoursSelection hour="15:00" />
+              <HoursSelection hour="16:00" />
+              <HoursSelection hour="17:00" />
+            </Hour>
 
-          <Calendar>
-            <DayPicker
-              weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
-              fromMonth={new Date()}
-              disabledDays={[{ daysOfWeek: [0, 6] }, ...disableDays]}
-              modifiers={{
-                available: { daysOfWeek: [1, 2, 3, 4, 5] },
-              }}
-              onMonthChange={handleMonthChange}
-              selectedDays={selectedDate}
-              onDayClick={handleDateChange}
-              months={[
-                'Janeiro',
-                'Fevereiro',
-                'Março',
-                'Abril',
-                'Maio',
-                'Junho',
-                'Julho',
-                'Agosto',
-                'Setembro',
-                'Outubro',
-                'Novembro',
-                'Dezembro',
-              ]}
-            />
-          </Calendar>
-        </DateAndHour>
+            <Calendar>
+              <DayPicker
+                weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}
+                fromMonth={new Date()}
+                disabledDays={[{ daysOfWeek: [0, 6] }, ...disableDays]}
+                modifiers={{
+                  available: { daysOfWeek: [1, 2, 3, 4, 5] },
+                }}
+                onMonthChange={handleMonthChange}
+                selectedDays={selectedDate}
+                onDayClick={handleDateChange}
+                months={[
+                  'Janeiro',
+                  'Fevereiro',
+                  'Março',
+                  'Abril',
+                  'Maio',
+                  'Junho',
+                  'Julho',
+                  'Agosto',
+                  'Setembro',
+                  'Outubro',
+                  'Novembro',
+                  'Dezembro',
+                ]}
+              />
+            </Calendar>
+          </DateAndHour>
 
-        <Barber>
-          <h1>
-            Escolha o seu barbeiro <AiOutlineArrowDown />
-          </h1>
-        </Barber>
-        {listBarbers ? (
-          <BarberList>
-            {listBarbers.map(barber => (
-              <span>{barber}</span>
+          <AppointmentSelection
+            title="Escolha o barbeiro"
+            icon={AiOutlineArrowDown}
+            onClick={() => setBarberVisible(!barberVisible)}
+          />
+
+          <BarberList isVisible={barberVisible}>
+            {barbers.map(barber => (
+              <BarberSelection
+                key={barber.id}
+                value={barber.id}
+                barberId="provider_id"
+                name={barber.name}
+                avatar_url={barber.avatar_url}
+              />
             ))}
-            {barbers
-              .filter(barber => barber.isBarber === true)
-              .map(barber => (
-                <img src={barber.avatar_url} alt={barber.name} />
-              ))}
           </BarberList>
-        ) : (
-          <h2>Não há barbeiros disponíveis no momento!</h2>
-        )}
-      </Content>
+
+          <Button type="submit">Confirmar agendamento</Button>
+        </Content>
+      </Form>
     </Container>
   );
 };
