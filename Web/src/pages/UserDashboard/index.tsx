@@ -1,3 +1,5 @@
+/* eslint-disable react/no-this-in-sfc */
+/* eslint-disable no-restricted-globals */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   useCallback,
@@ -84,7 +86,6 @@ const UserDashboard: React.FC = () => {
   const [monthAvailability, setMonthAvailability] = useState<
     MonthAvailabilityItem[]
   >([]);
-
   const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
 
@@ -309,9 +310,10 @@ const UserDashboard: React.FC = () => {
           <BarberList isVisible={barberVisible}>
             {barbers.map(barber => (
               <BarberSelection
+                onClick={() => setBarbers(barbers)}
                 key={barber.id}
-                value={barber.id}
                 barberId="provider_id"
+                value={barber.id}
                 name={barber.name}
                 avatar_url={barber.avatar_url}
               />

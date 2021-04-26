@@ -1,5 +1,6 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable no-shadow */
+/* eslint-disable react/no-this-in-sfc */
+/* eslint-disable no-param-reassign */
 import { useField } from '@unform/core';
 import React, {
   InputHTMLAttributes,
@@ -16,7 +17,7 @@ interface SelectBarberProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   value: string;
   barberId: string;
-  avatar_url: string;
+  avatar_url?: string;
   containerStyle?: React.CSSProperties;
 }
 
@@ -32,7 +33,7 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
-  const { fieldName, defaultValue, registerField } = useField(barberId);
+  const { fieldName, registerField } = useField(barberId);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -44,8 +45,6 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
     setIsFilled(!!barberRef.current?.value);
   }, []);
 
-  const defaultInputValue = value || defaultValue;
-
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -55,9 +54,6 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
       },
       setValue: (ref, newValue) => {
         ref.current.value = newValue;
-      },
-      clearValue: ref => {
-        ref.current.value = '';
       },
     });
   }, [fieldName, registerField]);
@@ -69,19 +65,13 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
         style={containerStyle}
         isFocused={isFocused}
       >
-        <input
-          type="hidden"
-          id={fieldName}
-          ref={barberRef}
-          defaultValue={defaultInputValue}
-          {...rest}
-        />
         <div
-          key={value}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           tabIndex={-1}
+          {...rest}
         >
+          <input type="hidden" id={fieldName} ref={barberRef} value={value} />
           {avatar_url ? (
             <img src={avatar_url} alt={name} />
           ) : (
