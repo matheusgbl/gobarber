@@ -161,13 +161,7 @@ const UserDashboard: React.FC = () => {
 
   useEffect(() => {
     api.get<Barbers[]>('/providers').then(response => {
-      const showBarbers = response.data
-        .filter(barber => barber.isBarber)
-        .map(barber => {
-          return {
-            ...barber,
-          };
-        });
+      const showBarbers = response.data.filter(barber => barber.isBarber);
       setBarbers(showBarbers);
     });
   }, []);
@@ -310,7 +304,6 @@ const UserDashboard: React.FC = () => {
           <BarberList isVisible={barberVisible}>
             {barbers.map(barber => (
               <BarberSelection
-                onClick={() => setBarbers(barbers)}
                 key={barber.id}
                 barberId="provider_id"
                 value={barber.id}

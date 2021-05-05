@@ -75,7 +75,13 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
           {avatar_url ? (
             <img src={avatar_url} alt={name} />
           ) : (
-            <Avatar name={name} alt={name} className="random-avatar" unstyled />
+            <Avatar
+              maxInitials={2}
+              name={name}
+              alt={name}
+              className="random-avatar"
+              unstyled
+            />
           )}
           <strong>{name}</strong>
         </div>
