@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-shadow */
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable no-param-reassign */
@@ -31,6 +33,8 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
 }) => {
   const barberRef = useRef<HTMLInputElement>(null);
 
+  const [selectedBarber, setSelectedBarber] = useState(value);
+
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
   const { fieldName, registerField } = useField(barberId);
@@ -58,20 +62,28 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
     });
   }, [fieldName, registerField]);
 
+  console.log(selectedBarber);
+
   return (
     <>
       <Container
         isFilled={isFilled}
-        style={containerStyle}
         isFocused={isFocused}
+        style={containerStyle}
       >
         <div
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           tabIndex={-1}
           {...rest}
+          onClick={() => setSelectedBarber(value)}
         >
-          <input type="hidden" id={fieldName} ref={barberRef} value={value} />
+          <input
+            type="hidden"
+            id={fieldName}
+            ref={barberRef}
+            value={selectedBarber}
+          />
           {avatar_url ? (
             <img src={avatar_url} alt={name} />
           ) : (
