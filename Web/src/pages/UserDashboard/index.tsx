@@ -1,6 +1,3 @@
-/* eslint-disable react/no-this-in-sfc */
-/* eslint-disable no-restricted-globals */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   useCallback,
   useEffect,
@@ -71,7 +68,6 @@ interface Barbers {
 }
 
 interface AppointmentFormData {
-  provider_id: string;
   service: string;
   date: string;
 }
@@ -89,6 +85,8 @@ const UserDashboard: React.FC = () => {
   const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
 
+  const [selectedBarber, setSelectedBarber] = useState('');
+
   const [serviceVisible, setServiceVisible] = useState(false);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [barberVisible, setBarberVisible] = useState(false);
@@ -104,13 +102,11 @@ const UserDashboard: React.FC = () => {
           provider_id: Yup.string().required(),
         });
 
-        console.log(data.provider_id);
-
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/appointments', data);
+        await api.post('/appointments', { ...data, selectedBarber });
 
         addToast({
           type: 'success',
@@ -133,7 +129,7 @@ const UserDashboard: React.FC = () => {
         });
       }
     },
-    [addToast],
+    [addToast, selectedBarber],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -144,6 +140,10 @@ const UserDashboard: React.FC = () => {
 
   const handleMonthChange = useCallback((month: Date) => {
     setCurrentMonth(month);
+  }, []);
+
+  const handleChangeBarber = useCallback((barberId: string) => {
+    setSelectedBarber(barberId);
   }, []);
 
   useEffect(() => {
@@ -305,10 +305,10 @@ const UserDashboard: React.FC = () => {
             {barbers.map(barber => (
               <BarberSelection
                 key={barber.id}
-                barberId="provider_id"
                 value={barber.id}
                 name={barber.name}
                 avatar_url={barber.avatar_url}
+                onCardSelect={handleChangeBarber}
               />
             ))}
           </BarberList>

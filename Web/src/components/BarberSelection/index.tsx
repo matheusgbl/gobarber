@@ -1,11 +1,6 @@
-/* eslint-disable no-shadow */
-/* eslint-disable react/no-this-in-sfc */
-/* eslint-disable no-param-reassign */
-import { useField } from '@unform/core';
 import React, {
   InputHTMLAttributes,
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -16,24 +11,23 @@ import { Container } from './styles';
 interface SelectBarberProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   value: string;
-  barberId: string;
   avatar_url?: string;
   containerStyle?: React.CSSProperties;
+  onCardSelect: (value: string) => void;
 }
 
 const SelectBarber: React.FC<SelectBarberProps> = ({
   name,
   value,
-  barberId,
   avatar_url,
   containerStyle = {},
+  onCardSelect,
   ...rest
 }) => {
   const barberRef = useRef<HTMLInputElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
-  const { fieldName, registerField } = useField(barberId);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -44,19 +38,6 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
 
     setIsFilled(!!barberRef.current?.value);
   }, []);
-
-  useEffect(() => {
-    registerField({
-      name: fieldName,
-      ref: barberRef,
-      getValue: ref => {
-        return ref.current.value;
-      },
-      setValue: (ref, newValue) => {
-        ref.current.value = newValue;
-      },
-    });
-  }, [fieldName, registerField]);
 
   return (
     <>
@@ -70,8 +51,9 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
           onBlur={handleInputBlur}
           tabIndex={-1}
           {...rest}
+          onClick={() => onCardSelect(value)}
         >
-          <input type="hidden" id={fieldName} ref={barberRef} value={value} />
+          <input type="hidden" id={value} ref={barberRef} value={value} />
           {avatar_url ? (
             <img src={avatar_url} alt={name} />
           ) : (
