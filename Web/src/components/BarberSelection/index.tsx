@@ -43,8 +43,8 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
     <>
       <Container
         isFilled={isFilled}
-        style={containerStyle}
         isFocused={isFocused}
+        style={containerStyle}
       >
         <div
           onFocus={handleInputFocus}

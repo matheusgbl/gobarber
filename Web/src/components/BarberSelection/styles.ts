@@ -52,14 +52,17 @@ export const Container = styled.div<ContainerProps>`
   ${props =>
     props.isFilled &&
     css`
-      color: #fff;
+      border-color: #ff9000;
+      background: ${shade(0.2, '#28262e')};
     `}
+
     div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
     width: 200px;
+
     img {
       border-radius: 50%;
       border: 1px solid #fff;

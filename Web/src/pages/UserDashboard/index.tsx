@@ -84,7 +84,6 @@ const UserDashboard: React.FC = () => {
   >([]);
   const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
-
   const [selectedBarber, setSelectedBarber] = useState('');
 
   const [serviceVisible, setServiceVisible] = useState(false);
