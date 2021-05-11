@@ -198,6 +198,49 @@ const UserDashboard: React.FC = () => {
     return dates;
   }, [currentMonth, monthAvailability]);
 
+  const hoursList = [
+    {
+      hour: '08:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '09:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '10:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '11:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '12:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '13:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '14:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '15:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '16:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+    {
+      hour: '17:00',
+      id: JSON.stringify(Math.random() * 100),
+    },
+  ];
+
   return (
     <Container>
       <Header>
@@ -253,16 +296,9 @@ const UserDashboard: React.FC = () => {
           <DateAndHour isVisible={calendarVisible}>
             <Hour className="date-and-hour">
               <h2>Horários disponíveis :</h2>
-              <HoursSelection hour="08:00" />
-              <HoursSelection hour="09:00" />
-              <HoursSelection hour="10:00" />
-              <HoursSelection hour="11:00" />
-              <HoursSelection hour="12:00" />
-              <HoursSelection hour="13:00" />
-              <HoursSelection hour="14:00" />
-              <HoursSelection hour="15:00" />
-              <HoursSelection hour="16:00" />
-              <HoursSelection hour="17:00" />
+              {hoursList.map(hours => (
+                <HoursSelection key={hours.id} hour={hours.hour} />
+              ))}
             </Hour>
 
             <Calendar>
