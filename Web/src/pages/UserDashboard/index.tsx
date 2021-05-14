@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 import React, {
   useCallback,
   useEffect,
@@ -20,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
+import moment from 'moment';
 import { Form } from '@unform/web';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
@@ -89,6 +92,8 @@ const UserDashboard: React.FC = () => {
   const [serviceVisible, setServiceVisible] = useState(false);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [barberVisible, setBarberVisible] = useState(false);
+
+  const [isAvailable, setIsAvailable] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: AppointmentFormData) => {
@@ -198,48 +203,81 @@ const UserDashboard: React.FC = () => {
     return dates;
   }, [currentMonth, monthAvailability]);
 
-  const hoursList = [
-    {
-      hour: '08:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '09:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '10:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '11:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '12:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '13:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '14:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '15:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '16:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-    {
-      hour: '17:00',
-      id: JSON.stringify(Math.random() * 100),
-    },
-  ];
+  const today = moment().date();
+  const nowHour = moment().format('LT');
+  const calendarDate = selectedDate.getDate();
+
+  console.log(selectedDate.getDate());
+  console.log(selectedDate.getMonth() + 1);
+  console.log(selectedDate.getFullYear());
+
+  const availableHoursList = useMemo(() => {
+    const hoursList = [
+      {
+        hour: '08:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '09:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '10:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '11:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '12:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '13:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '14:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '15:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '16:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+      {
+        hour: '17:00',
+        id: JSON.stringify(Math.random() * 100),
+      },
+    ];
+    const listHours = hoursList.map(hour => {
+      const hours = hour;
+      if (calendarDate !== today) {
+        setIsAvailable(false);
+        return hours;
+      }
+      if (nowHour < hour.hour) {
+        return hour;
+      }
+      const unavailable = {
+        hour: hour.hour,
+        id: JSON.stringify(Math.random() * 100),
+      };
+      return unavailable;
+    });
+    return listHours;
+  }, [nowHour, today, calendarDate]);
+
+  const li = document.getElementsByTagName('li');
+  for (let index = 1; index < li.length; index += 1) {
+    if (li[index].innerHTML < nowHour && calendarDate === today) {
+      li[index].classList.add('unavailable');
+    }
+  }
 
   return (
     <Container>
@@ -294,13 +332,17 @@ const UserDashboard: React.FC = () => {
             onClick={() => setCalendarVisible(!calendarVisible)}
           />
           <DateAndHour isVisible={calendarVisible}>
-            <Hour className="date-and-hour">
-              <h2>Horários disponíveis :</h2>
-              {hoursList.map(hours => (
-                <HoursSelection key={hours.id} hour={hours.hour} />
+            <h2>Horários disponíveis :</h2>
+
+            <Hour isAvailable={isAvailable} className="date-and-hour">
+              {availableHoursList.map(hours => (
+                <HoursSelection
+                  id="hour_list"
+                  key={hours.id}
+                  hour={hours.hour}
+                />
               ))}
             </Hour>
-
             <Calendar>
               <DayPicker
                 weekdaysShort={['D', 'S', 'T', 'Q', 'Q', 'S', 'S']}

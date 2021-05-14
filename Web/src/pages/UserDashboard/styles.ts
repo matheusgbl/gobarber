@@ -8,6 +8,10 @@ interface Visible {
   isVisible: boolean;
 }
 
+interface Available {
+  isAvailable: boolean;
+}
+
 export const Container = styled.div``;
 
 export const Header = styled.header`
@@ -151,6 +155,10 @@ export const DateAndHour = styled.div<Visible>`
   display: none;
   width: 100%;
 
+  h2 {
+    width: 100%;
+  }
+
   ${props =>
     props.isVisible &&
     css`
@@ -158,35 +166,52 @@ export const DateAndHour = styled.div<Visible>`
     `}
 `;
 
-export const Hour = styled.div`
-  width: 60%;
+export const Hour = styled.div<Available>`
+  width: 40%;
+  margin-top: 20px;
+  height: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 
-  h2 {
-    color: #fff;
-  }
-`;
+  ${props =>
+    props.isAvailable &&
+    css`
+      pointer-events: none;
+    `}
 
-export const HourList = styled.div`
-  ul {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(3, 2fr);
-    margin-left: 15px;
-    width: 300px;
+  .unavailable {
+    background: transparent;
+    cursor: not-allowed;
+    pointer-events: none;
 
-    li {
-      padding: 10px 20px;
-      background: #28262e;
-      margin: 10px auto;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 18px;
-      transition: background 0.4s;
-
-      &:hover {
-        background: #ff9000;
-      }
+    &:hover {
+      background: none;
     }
+  }
+  li {
+    padding: 10px 20px;
+    background: #28262e;
+    margin: 10px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.4s;
+
+    &:hover {
+      background: #ff9000;
+    }
+
+    ${props =>
+      props.isAvailable &&
+      css`
+        background: transparent;
+        cursor: not-allowed;
+        pointer-events: none;
+
+        &:hover {
+          background: none;
+        }
+      `}
   }
 `;
 
@@ -195,7 +220,7 @@ export const Calendar = styled.aside`
   width: 380px;
   margin-left: auto;
   margin-bottom: 20px;
-  margin-top: 10px;
+  margin-top: -40px;
 
   .DayPicker {
     border-radius: 0.6rem;
