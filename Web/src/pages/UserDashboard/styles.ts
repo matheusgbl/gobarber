@@ -148,6 +148,10 @@ export const ServiceList = styled.li<Visible>`
     css`
       display: flex;
     `}
+
+  .select {
+    margin-bottom: 20px;
+  }
 `;
 
 export const DateAndHour = styled.div<Visible>`

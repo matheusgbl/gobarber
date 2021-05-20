@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
 import React, {
   useCallback,
   useEffect,
@@ -17,6 +15,8 @@ import {
   AiOutlinePoweroff,
   AiOutlineUser,
 } from 'react-icons/ai';
+
+import Select from 'react-select';
 
 import { Link } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
@@ -49,7 +49,6 @@ import AppointmentSelection from '../../components/AppointmentSelection';
 import Button from '../../components/Button';
 import HoursSelection from '../../components/HoursSelection';
 import getValidationErrors from '../../utils/getValidationErrors';
-import Input from '../../components/Input';
 
 interface MonthAvailabilityItem {
   day: number;
@@ -207,10 +206,6 @@ const UserDashboard: React.FC = () => {
   const nowHour = moment().format('LT');
   const calendarDate = selectedDate.getDate();
 
-  console.log(selectedDate.getDate());
-  console.log(selectedDate.getMonth() + 1);
-  console.log(selectedDate.getFullYear());
-
   const availableHoursList = useMemo(() => {
     const hoursList = [
       {
@@ -279,6 +274,17 @@ const UserDashboard: React.FC = () => {
     }
   }
 
+  const options = [
+    { value: 'acabamentos', label: 'Acabamentos' },
+    { value: 'barba máquina', label: 'Barba Máquina' },
+    { value: 'barba navalha', label: 'Barba Navalha' },
+    { value: 'corte tesoura', label: 'Corte Tesoura' },
+    { value: 'corte máquina', label: 'Corte Máquina' },
+    { value: 'corte infantil', label: 'Corte Infantil' },
+    { value: 'escova progressiva', label: 'Escova Progressiva' },
+    { value: 'sobrancelha', label: 'Sobrancelha' },
+  ];
+
   return (
     <Container>
       <Header>
@@ -324,7 +330,23 @@ const UserDashboard: React.FC = () => {
             onClick={() => setServiceVisible(!serviceVisible)}
           />
           <ServiceList isVisible={serviceVisible}>
-            <Input name="service" />
+            <Select
+              maxMenuHeight={200}
+              className="select"
+              theme={theme => ({
+                ...theme,
+                borderRadius: 10,
+                colors: {
+                  ...theme.colors,
+                  primary25: '#222',
+                  primary50: '#ff9000',
+                  neutral0: '#333',
+                  primary: '#ff9000',
+                  neutral80: '#fff',
+                },
+              })}
+              options={options}
+            />
           </ServiceList>
           <AppointmentSelection
             title="Escolha o horário e a data que deseja marcar"
