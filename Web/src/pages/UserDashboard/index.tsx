@@ -72,6 +72,7 @@ interface Barbers {
 interface AppointmentFormData {
   service: string;
   date: string;
+  provider_id: string;
 }
 
 const UserDashboard: React.FC = () => {
@@ -94,6 +95,8 @@ const UserDashboard: React.FC = () => {
 
   const [isAvailable, setIsAvailable] = useState(false);
 
+  const [selectedHour, setSelectedHour] = useState('');
+
   const handleSubmit = useCallback(
     async (data: AppointmentFormData) => {
       try {
@@ -109,7 +112,11 @@ const UserDashboard: React.FC = () => {
           abortEarly: false,
         });
 
-        await api.post('/appointments', { ...data, selectedBarber });
+        await api.post('/appointments', {
+          ...data,
+          selectedBarber,
+          selectedHour,
+        });
 
         addToast({
           type: 'success',
@@ -132,7 +139,7 @@ const UserDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, selectedBarber],
+    [addToast, selectedBarber, selectedHour],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -275,14 +282,14 @@ const UserDashboard: React.FC = () => {
   }
 
   const options = [
-    { value: 'acabamentos', label: 'Acabamentos' },
-    { value: 'barba máquina', label: 'Barba Máquina' },
-    { value: 'barba navalha', label: 'Barba Navalha' },
-    { value: 'corte tesoura', label: 'Corte Tesoura' },
-    { value: 'corte máquina', label: 'Corte Máquina' },
-    { value: 'corte infantil', label: 'Corte Infantil' },
-    { value: 'escova progressiva', label: 'Escova Progressiva' },
-    { value: 'sobrancelha', label: 'Sobrancelha' },
+    { value: 'acabamentos', label: '💈 Acabamentos' },
+    { value: 'barba máquina', label: '💈 Barba Máquina' },
+    { value: 'barba navalha', label: '💈 Barba Navalha' },
+    { value: 'corte tesoura', label: '💈 Corte Tesoura' },
+    { value: 'corte máquina', label: '💈 Corte Máquina' },
+    { value: 'corte infantil', label: '💈 Corte Infantil' },
+    { value: 'escova progressiva', label: '💈 Escova Progressiva' },
+    { value: 'sobrancelha', label: '💈 Sobrancelha' },
   ];
 
   return (
@@ -331,6 +338,7 @@ const UserDashboard: React.FC = () => {
           />
           <ServiceList isVisible={serviceVisible}>
             <Select
+              placeholder="Escolha seu serviço"
               maxMenuHeight={200}
               className="select"
               theme={theme => ({
@@ -362,6 +370,7 @@ const UserDashboard: React.FC = () => {
                   id="hour_list"
                   key={hours.id}
                   hour={hours.hour}
+                  onClick={() => setSelectedHour(hours.hour)}
                 />
               ))}
             </Hour>
