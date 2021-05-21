@@ -29,8 +29,6 @@ import { Form } from '@unform/web';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
-import { useToast } from '../../hooks/toast';
-
 import {
   Container,
   Header,
@@ -57,6 +55,11 @@ interface MonthAvailabilityItem {
   available: boolean;
 }
 
+interface ProviderAvailable {
+  hour: number;
+  available: boolean;
+}
+
 interface Appointment {
   id: string;
   service: string;
@@ -80,7 +83,6 @@ interface AppointmentFormData {
 const UserDashboard: React.FC = () => {
   const { signOut, user } = useAuth();
   const formRef = useRef<FormHandles>(null);
-  const { addToast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -90,6 +92,7 @@ const UserDashboard: React.FC = () => {
   const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
   const [selectedBarber, setSelectedBarber] = useState('');
+  const [providerHour, setProviderHour] = useState<ProviderAvailable[]>([]);
 
   const [serviceVisible, setServiceVisible] = useState(false);
   const [calendarVisible, setCalendarVisible] = useState(false);
@@ -141,9 +144,9 @@ const UserDashboard: React.FC = () => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          service: Yup.string().required('Selecione um serviço.'),
-          date: Yup.string().required('Informe uma data.'),
-          provider_id: Yup.string().required('Selecione um barbeiro'),
+          service: Yup.string().required(),
+          date: Yup.string().required(),
+          provider_id: Yup.string().required(),
         });
 
         data.service = selectedService;
@@ -157,26 +160,15 @@ const UserDashboard: React.FC = () => {
         });
 
         await api.post('/appointments', data);
-
-        addToast({
-          type: 'success',
-          title: 'teste',
-        });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
           formRef.current?.setErrors(errors);
-
-          return;
         }
-        addToast({
-          type: 'error',
-          title: 'Erro ao confirmar agendamento',
-        });
       }
     },
-    [addToast, selectedService, formattedDate, selectedBarber],
+    [selectedService, formattedDate, selectedBarber],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -232,6 +224,22 @@ const UserDashboard: React.FC = () => {
         setAppointments(appointmentsFormatted);
       });
   }, [selectedDate]);
+
+  useEffect(() => {
+    api
+      .get(`/providers/${selectedBarber}/day-availability`, {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then(response => {
+        setProviderHour(response.data);
+      });
+  }, [selectedBarber, selectedDate]);
+
+  console.log(providerHour);
 
   const disableDays = useMemo(() => {
     const dates = monthAvailability
