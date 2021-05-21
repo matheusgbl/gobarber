@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import React, {
   useCallback,
@@ -97,6 +98,7 @@ const UserDashboard: React.FC = () => {
   const [isAvailable, setIsAvailable] = useState(false);
 
   const [selectedHour, setSelectedHour] = useState('');
+  const [selectedService, setSelectedService] = useState('');
 
   const today = moment().date();
   const nowHour = moment().format('LT');
@@ -124,11 +126,11 @@ const UserDashboard: React.FC = () => {
 
   const formattedDate = useMemo(() => {
     const day = selectedDate.getDate().toString();
-    const month = selectedDate.getMonth().toString();
+    const month = JSON.stringify(selectedDate.getMonth() + 1);
     const year = selectedDate.getFullYear().toString();
     const hour = selectedHour.toString();
 
-    const formatted = `${day}/0${month}/${year} ${hour}`;
+    const formatted = `${year}-0${month}-${day} ${hour}`;
 
     return formatted;
   }, [selectedHour, selectedDate]);
@@ -144,21 +146,21 @@ const UserDashboard: React.FC = () => {
           provider_id: Yup.string().required('Selecione um barbeiro'),
         });
 
-        data.provider_id = selectedBarber;
+        data.service = selectedService;
         data.date = formattedDate;
+        data.provider_id = selectedBarber;
+
+        console.log(data);
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/appointments', {
-          ...data,
-        });
+        await api.post('/appointments', data);
 
         addToast({
           type: 'success',
           title: 'teste',
-          description: 'Dapadale na narguila!',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -171,12 +173,10 @@ const UserDashboard: React.FC = () => {
         addToast({
           type: 'error',
           title: 'Erro ao confirmar agendamento',
-          description:
-            'Ocorreu um erro ao fazer o agendamento, verifique os dados!',
         });
       }
     },
-    [addToast, selectedBarber, formattedDate],
+    [addToast, selectedService, formattedDate, selectedBarber],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -371,6 +371,9 @@ const UserDashboard: React.FC = () => {
                 },
               })}
               options={options}
+              onChange={option => {
+                setSelectedService(option!.value);
+              }}
             />
           </ServiceList>
           <AppointmentSelection
