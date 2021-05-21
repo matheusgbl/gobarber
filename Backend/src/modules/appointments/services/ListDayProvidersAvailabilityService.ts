@@ -5,6 +5,7 @@ import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
   provider_id: string;
+  service: string;
   day: number;
   month: number;
   year: number;
@@ -24,6 +25,7 @@ class ListDayProvidersAvaliabilityService {
 
   public async execute({
     provider_id,
+    service,
     day,
     month,
     year,
@@ -31,6 +33,7 @@ class ListDayProvidersAvaliabilityService {
     const appointments = await this.appointmentsRepository.findAllInDayFromProvider(
       {
         provider_id,
+        service,
         day,
         month,
         year,

@@ -1,5 +1,3 @@
-// import AppError from '@shared/errors/AppError';
-
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 import ListProvidersService from './ListProvidersService';
@@ -42,6 +40,7 @@ describe('ListProviders', () => {
     });
 
     const providers = await listProviders.execute({
+      name: loggedUser.name,
       user_id: loggedUser.id,
       isBarber: loggedUser.isBarber,
     });
