@@ -6,6 +6,7 @@ import Appointment from '../infra/typeorm/entities/Appointment';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
 interface IRequest {
+  service: string;
   provider_id: string;
   day: number;
   month: number;
@@ -24,6 +25,7 @@ class ListProviderAppointmentsService {
 
   public async execute({
     provider_id,
+    service,
     year,
     month,
     day,
@@ -38,6 +40,7 @@ class ListProviderAppointmentsService {
       appointments = await this.appointmentsRepository.findAllInDayFromProvider(
         {
           provider_id,
+          service,
           day,
           year,
           month,
