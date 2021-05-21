@@ -1,9 +1,4 @@
-import React, {
-  InputHTMLAttributes,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
+import React, { InputHTMLAttributes, useRef, useState } from 'react';
 import Avatar from 'react-avatar';
 
 import { Container } from './styles';
@@ -27,28 +22,13 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
   const barberRef = useRef<HTMLInputElement>(null);
 
   const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
-
-  const handleInputFocus = useCallback(() => {
-    setIsFocused(true);
-  }, []);
-
-  const handleInputBlur = useCallback(() => {
-    setIsFocused(false);
-
-    setIsFilled(!!barberRef.current?.value);
-  }, []);
 
   return (
     <>
-      <Container
-        isFilled={isFilled}
-        isFocused={isFocused}
-        style={containerStyle}
-      >
+      <Container isFocused={isFocused} style={containerStyle}>
         <div
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           tabIndex={-1}
           {...rest}
           onClick={() => onCardSelect(value)}

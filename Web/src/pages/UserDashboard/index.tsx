@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useCallback,
   useEffect,
@@ -97,6 +98,41 @@ const UserDashboard: React.FC = () => {
 
   const [selectedHour, setSelectedHour] = useState('');
 
+  const today = moment().date();
+  const nowHour = moment().format('LT');
+  const calendarDate = selectedDate.getDate();
+
+  const unavailableHour = () => {
+    const li = document.getElementsByTagName('li');
+    for (let index = 1; index < li.length; index += 1) {
+      if (li[index].innerHTML < nowHour && calendarDate === today) {
+        li[index].classList.add('unavailable');
+      }
+    }
+  };
+
+  const options = [
+    { value: 'Acabamentos', label: '💈 Acabamentos' },
+    { value: 'Barba Máquina', label: '💈 Barba Máquina' },
+    { value: 'Barba Navalha', label: '💈 Barba Navalha' },
+    { value: 'Corte Tesoura', label: '💈 Corte Tesoura' },
+    { value: 'Corte Máquina', label: '💈 Corte Máquina' },
+    { value: 'Corte Infantil', label: '💈 Corte Infantil' },
+    { value: 'Escova Progressiva', label: '💈 Escova Progressiva' },
+    { value: 'Sobrancelha', label: '💈 Sobrancelha' },
+  ];
+
+  const formattedDate = useMemo(() => {
+    const day = selectedDate.getDate().toString();
+    const month = selectedDate.getMonth().toString();
+    const year = selectedDate.getFullYear().toString();
+    const hour = selectedHour.toString();
+
+    const formatted = `${day}/0${month}/${year} ${hour}`;
+
+    return formatted;
+  }, [selectedHour, selectedDate]);
+
   const handleSubmit = useCallback(
     async (data: AppointmentFormData) => {
       try {
@@ -105,8 +141,11 @@ const UserDashboard: React.FC = () => {
         const schema = Yup.object().shape({
           service: Yup.string().required('Selecione um serviço.'),
           date: Yup.string().required('Informe uma data.'),
-          provider_id: Yup.string().required(),
+          provider_id: Yup.string().required('Selecione um barbeiro'),
         });
+
+        data.provider_id = selectedBarber;
+        data.date = formattedDate;
 
         await schema.validate(data, {
           abortEarly: false,
@@ -114,8 +153,6 @@ const UserDashboard: React.FC = () => {
 
         await api.post('/appointments', {
           ...data,
-          selectedBarber,
-          selectedHour,
         });
 
         addToast({
@@ -139,7 +176,7 @@ const UserDashboard: React.FC = () => {
         });
       }
     },
-    [addToast, selectedBarber, selectedHour],
+    [addToast, selectedBarber, formattedDate],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -152,8 +189,8 @@ const UserDashboard: React.FC = () => {
     setCurrentMonth(month);
   }, []);
 
-  const handleChangeBarber = useCallback((barberId: string) => {
-    setSelectedBarber(barberId);
+  const handleChangeBarber = useCallback((provider_id: string) => {
+    setSelectedBarber(provider_id);
   }, []);
 
   useEffect(() => {
@@ -208,10 +245,6 @@ const UserDashboard: React.FC = () => {
 
     return dates;
   }, [currentMonth, monthAvailability]);
-
-  const today = moment().date();
-  const nowHour = moment().format('LT');
-  const calendarDate = selectedDate.getDate();
 
   const availableHoursList = useMemo(() => {
     const hoursList = [
@@ -274,23 +307,7 @@ const UserDashboard: React.FC = () => {
     return listHours;
   }, [nowHour, today, calendarDate]);
 
-  const li = document.getElementsByTagName('li');
-  for (let index = 1; index < li.length; index += 1) {
-    if (li[index].innerHTML < nowHour && calendarDate === today) {
-      li[index].classList.add('unavailable');
-    }
-  }
-
-  const options = [
-    { value: 'acabamentos', label: '💈 Acabamentos' },
-    { value: 'barba máquina', label: '💈 Barba Máquina' },
-    { value: 'barba navalha', label: '💈 Barba Navalha' },
-    { value: 'corte tesoura', label: '💈 Corte Tesoura' },
-    { value: 'corte máquina', label: '💈 Corte Máquina' },
-    { value: 'corte infantil', label: '💈 Corte Infantil' },
-    { value: 'escova progressiva', label: '💈 Escova Progressiva' },
-    { value: 'sobrancelha', label: '💈 Sobrancelha' },
-  ];
+  unavailableHour();
 
   return (
     <Container>

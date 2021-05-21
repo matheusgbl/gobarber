@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 
 interface ContainerProps {
   isFocused: boolean;
-  isFilled: boolean;
 }
 
 export const Container = styled.div<ContainerProps>`
@@ -49,14 +48,7 @@ export const Container = styled.div<ContainerProps>`
       background: ${shade(0.2, '#28262e')};
     `}
 
-  ${props =>
-    props.isFilled &&
-    css`
-      border-color: #ff9000;
-      background: ${shade(0.2, '#28262e')};
-    `}
-
-    div {
+  div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
