@@ -8,10 +8,6 @@ interface Visible {
   isVisible: boolean;
 }
 
-interface Available {
-  isAvailable: boolean;
-}
-
 export const Container = styled.div``;
 
 export const Header = styled.header`
@@ -170,18 +166,12 @@ export const DateAndHour = styled.div<Visible>`
     `}
 `;
 
-export const Hour = styled.div<Available>`
+export const Hour = styled.div`
   width: 40%;
   margin-top: 20px;
   height: 40px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
-  ${props =>
-    props.isAvailable &&
-    css`
-      pointer-events: none;
-    `}
 
   .unavailable {
     background: transparent;
@@ -204,18 +194,6 @@ export const Hour = styled.div<Available>`
     &:hover {
       background: #ff9000;
     }
-
-    ${props =>
-      props.isAvailable &&
-      css`
-        background: transparent;
-        cursor: not-allowed;
-        pointer-events: none;
-
-        &:hover {
-          background: none;
-        }
-      `}
   }
 `;
 

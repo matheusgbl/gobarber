@@ -1,3 +1,6 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable array-callback-return */
+/* eslint-disable consistent-return */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import React, {
@@ -24,7 +27,6 @@ import { Link } from 'react-router-dom';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
-import moment from 'moment';
 import { Form } from '@unform/web';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
@@ -58,6 +60,7 @@ interface MonthAvailabilityItem {
 interface ProviderAvailable {
   hour: number;
   available: boolean;
+  id: string;
 }
 
 interface Appointment {
@@ -98,23 +101,8 @@ const UserDashboard: React.FC = () => {
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [barberVisible, setBarberVisible] = useState(false);
 
-  const [isAvailable, setIsAvailable] = useState(false);
-
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedService, setSelectedService] = useState('');
-
-  const today = moment().date();
-  const nowHour = moment().format('LT');
-  const calendarDate = selectedDate.getDate();
-
-  const unavailableHour = () => {
-    const li = document.getElementsByTagName('li');
-    for (let index = 1; index < li.length; index += 1) {
-      if (li[index].innerHTML < nowHour && calendarDate === today) {
-        li[index].classList.add('unavailable');
-      }
-    }
-  };
 
   const options = [
     { value: 'Acabamentos', label: '💈 Acabamentos' },
@@ -152,8 +140,6 @@ const UserDashboard: React.FC = () => {
         data.service = selectedService;
         data.date = formattedDate;
         data.provider_id = selectedBarber;
-
-        console.log(data);
 
         await schema.validate(data, {
           abortEarly: false,
@@ -227,19 +213,40 @@ const UserDashboard: React.FC = () => {
 
   useEffect(() => {
     api
-      .get(`/providers/${selectedBarber}/day-availability`, {
-        params: {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth() + 1,
-          day: selectedDate.getDate(),
+      .get<ProviderAvailable[]>(
+        `/providers/${selectedBarber}/day-availability`,
+        {
+          params: {
+            year: selectedDate.getFullYear(),
+            month: selectedDate.getMonth() + 1,
+            day: selectedDate.getDate(),
+          },
         },
-      })
+      )
       .then(response => {
         setProviderHour(response.data);
       });
   }, [selectedBarber, selectedDate]);
 
-  console.log(providerHour);
+  const availableHoursList = useMemo(() => {
+    const response = providerHour
+      .filter(hours => hours.available)
+      .map(hours => {
+        const data = {
+          hour: hours.hour.toString(),
+          id: JSON.stringify(Math.random() * 100),
+          available: hours.available,
+        };
+        if (data.hour >= '10') {
+          data.hour = `${data.hour}:00`;
+        }
+        if (data.hour.startsWith('8') || data.hour.startsWith('9')) {
+          data.hour = `0${data.hour}`;
+        }
+        return data;
+      });
+    return response;
+  }, [providerHour]);
 
   const disableDays = useMemo(() => {
     const dates = monthAvailability
@@ -253,69 +260,6 @@ const UserDashboard: React.FC = () => {
 
     return dates;
   }, [currentMonth, monthAvailability]);
-
-  const availableHoursList = useMemo(() => {
-    const hoursList = [
-      {
-        hour: '08:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '09:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '10:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '11:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '12:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '13:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '14:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '15:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '16:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-      {
-        hour: '17:00',
-        id: JSON.stringify(Math.random() * 100),
-      },
-    ];
-    const listHours = hoursList.map(hour => {
-      const hours = hour;
-      if (calendarDate !== today) {
-        setIsAvailable(false);
-        return hours;
-      }
-      if (nowHour < hour.hour) {
-        return hour;
-      }
-      const unavailable = {
-        hour: hour.hour,
-        id: JSON.stringify(Math.random() * 100),
-      };
-      return unavailable;
-    });
-    return listHours;
-  }, [nowHour, today, calendarDate]);
-
-  unavailableHour();
 
   return (
     <Container>
@@ -392,7 +336,7 @@ const UserDashboard: React.FC = () => {
           <DateAndHour isVisible={calendarVisible}>
             <h2>Horários disponíveis :</h2>
 
-            <Hour isAvailable={isAvailable} className="date-and-hour">
+            <Hour className="date-and-hour">
               {availableHoursList.map(hours => (
                 <HoursSelection
                   id="hour_list"
