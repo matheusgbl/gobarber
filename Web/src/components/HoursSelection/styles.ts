@@ -15,6 +15,9 @@ export const Container = styled.div<ContainerProps>`
     margin-left: 10px;
 
     li {
+      .focused {
+        background: ${shade(0.2, '#ff9000')};
+      }
       ${props =>
         props.isFocused &&
         css`

@@ -1,6 +1,4 @@
-/* eslint-disable no-return-assign */
-/* eslint-disable array-callback-return */
-/* eslint-disable consistent-return */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import React, {
@@ -94,13 +92,13 @@ const UserDashboard: React.FC = () => {
   >([]);
   const [, setAppointments] = useState<Appointment[]>([]);
   const [barbers, setBarbers] = useState<Barbers[]>([]);
-  const [selectedBarber, setSelectedBarber] = useState('');
   const [providerHour, setProviderHour] = useState<ProviderAvailable[]>([]);
 
   const [serviceVisible, setServiceVisible] = useState(false);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [barberVisible, setBarberVisible] = useState(false);
 
+  const [selectedBarber, setSelectedBarber] = useState('');
   const [selectedHour, setSelectedHour] = useState('');
   const [selectedService, setSelectedService] = useState('');
 
@@ -185,6 +183,16 @@ const UserDashboard: React.FC = () => {
   }, [currentMonth, user.id]);
 
   useEffect(() => {
+    const defaultBarber = barbers
+      .map(barber => barber.id)
+      .slice(barbers.length - 1)
+      .join();
+    setSelectedBarber(defaultBarber);
+  }, [barbers]);
+
+  console.log(selectedBarber);
+
+  useEffect(() => {
     api.get<Barbers[]>('/providers').then(response => {
       const showBarbers = response.data.filter(barber => barber.isBarber);
       setBarbers(showBarbers);
@@ -212,20 +220,22 @@ const UserDashboard: React.FC = () => {
   }, [selectedDate]);
 
   useEffect(() => {
-    api
-      .get<ProviderAvailable[]>(
-        `/providers/${selectedBarber}/day-availability`,
-        {
-          params: {
-            year: selectedDate.getFullYear(),
-            month: selectedDate.getMonth() + 1,
-            day: selectedDate.getDate(),
+    setTimeout(() => {
+      api
+        .get<ProviderAvailable[]>(
+          `/providers/${selectedBarber}/day-availability`,
+          {
+            params: {
+              year: selectedDate.getFullYear(),
+              month: selectedDate.getMonth() + 1,
+              day: selectedDate.getDate(),
+            },
           },
-        },
-      )
-      .then(response => {
-        setProviderHour(response.data);
-      });
+        )
+        .then(response => {
+          setProviderHour(response.data);
+        });
+    }, 1000);
   }, [selectedBarber, selectedDate]);
 
   const availableHoursList = useMemo(() => {

@@ -30,7 +30,7 @@ const HoursSelection: React.FC<HoursSelectionProps> = ({
     <>
       <Container style={containerStyle} isFocused={isFocused}>
         <div onFocus={handleInputFocus} ref={hourRef} {...rest} tabIndex={-1}>
-          <List tabIndex={0}>
+          <List tabIndex={-1}>
             <li>{hour}</li>
           </List>
         </div>
