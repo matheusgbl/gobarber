@@ -1,8 +1,19 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { shade } from 'polished';
 
 import ArrowLeftIcon from '../../assets/ArrowLeftIcon.svg';
 import ArrowRightIcon from '../../assets/ArrowRightIcon.svg';
+
+const appearFromLeft = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-500px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 interface Visible {
   isVisible: boolean;
@@ -132,6 +143,22 @@ export const Content = styled.main`
       width: 100%;
     }
   }
+`;
+
+export const AnimationLeft = styled.div`
+  animation: ${appearFromLeft} 2s;
+`;
+
+export const AnimationLeft1 = styled.div`
+  animation: ${appearFromLeft} 2.5s;
+`;
+
+export const AnimationLeft2 = styled.div`
+  animation: ${appearFromLeft} 3s;
+`;
+
+export const AnimationLeft3 = styled.div`
+  animation: ${appearFromLeft} 3.5s;
 `;
 
 export const ServiceList = styled.li<Visible>`

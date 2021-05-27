@@ -35,6 +35,10 @@ import {
   HeaderContent,
   Profile,
   Content,
+  AnimationLeft,
+  AnimationLeft1,
+  AnimationLeft2,
+  AnimationLeft3,
   ServiceList,
   DateAndHour,
   Hour,
@@ -190,8 +194,6 @@ const UserDashboard: React.FC = () => {
     setSelectedBarber(defaultBarber);
   }, [barbers]);
 
-  console.log(selectedBarber);
-
   useEffect(() => {
     api.get<Barbers[]>('/providers').then(response => {
       const showBarbers = response.data.filter(barber => barber.isBarber);
@@ -235,7 +237,7 @@ const UserDashboard: React.FC = () => {
         .then(response => {
           setProviderHour(response.data);
         });
-    }, 1000);
+    }, 500);
   }, [selectedBarber, selectedDate]);
 
   const availableHoursList = useMemo(() => {
@@ -310,11 +312,14 @@ const UserDashboard: React.FC = () => {
 
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Content>
-          <AppointmentSelection
-            title="Selecione o tipo de serviço"
-            icon={AiOutlineArrowDown}
-            onClick={() => setServiceVisible(!serviceVisible)}
-          />
+          <AnimationLeft>
+            <AppointmentSelection
+              title="Selecione o tipo de serviço"
+              icon={AiOutlineArrowDown}
+              onClick={() => setServiceVisible(!serviceVisible)}
+            />
+          </AnimationLeft>
+
           <ServiceList isVisible={serviceVisible}>
             <Select
               placeholder="Escolha seu serviço"
@@ -338,11 +343,15 @@ const UserDashboard: React.FC = () => {
               }}
             />
           </ServiceList>
-          <AppointmentSelection
-            title="Escolha o horário e a data que deseja marcar"
-            icon={AiOutlineArrowDown}
-            onClick={() => setCalendarVisible(!calendarVisible)}
-          />
+
+          <AnimationLeft1>
+            <AppointmentSelection
+              title="Escolha o horário e a data que deseja marcar"
+              icon={AiOutlineArrowDown}
+              onClick={() => setCalendarVisible(!calendarVisible)}
+            />
+          </AnimationLeft1>
+
           <DateAndHour isVisible={calendarVisible}>
             <h2>Horários disponíveis :</h2>
 
@@ -385,11 +394,13 @@ const UserDashboard: React.FC = () => {
             </Calendar>
           </DateAndHour>
 
-          <AppointmentSelection
-            title="Escolha o barbeiro"
-            icon={AiOutlineArrowDown}
-            onClick={() => setBarberVisible(!barberVisible)}
-          />
+          <AnimationLeft2>
+            <AppointmentSelection
+              title="Escolha o barbeiro"
+              icon={AiOutlineArrowDown}
+              onClick={() => setBarberVisible(!barberVisible)}
+            />
+          </AnimationLeft2>
 
           <BarberList isVisible={barberVisible}>
             {barbers.map(barber => (
@@ -403,7 +414,9 @@ const UserDashboard: React.FC = () => {
             ))}
           </BarberList>
 
-          <Button type="submit">Confirmar agendamento</Button>
+          <AnimationLeft3>
+            <Button type="submit">Confirmar agendamento</Button>
+          </AnimationLeft3>
         </Content>
       </Form>
     </Container>
