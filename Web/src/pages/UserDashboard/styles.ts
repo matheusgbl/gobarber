@@ -117,7 +117,7 @@ export const Content = styled.main`
     font-weight: 500;
     letter-spacing: 0.35rem;
     color: #eee;
-    transition: all 0.35s;
+    transition: all 0.25s;
     background: transparent;
     border: 1px solid #ff9000;
     transform: translate(0);
@@ -130,7 +130,7 @@ export const Content = styled.main`
       width: 0;
       height: 100%;
       background: #ff9000;
-      transition: all 1.35s;
+      transition: all 1.25s;
       z-index: -1;
       border-radius: 8px;
     }
