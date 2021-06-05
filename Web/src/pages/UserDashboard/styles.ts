@@ -320,6 +320,28 @@ export const BarberList = styled.div<Visible>`
   display: none;
   margin-top: 10px;
   width: 100%;
+  overflow-x: auto;
+
+  ::-webkit-scrollbar {
+    background-color: #ccc;
+    height: 12px;
+    overflow: visible;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #28262e;
+    outline: none;
+  }
+
+  ::-webkit-scrollbar:vertical {
+    display: none;
+  }
 
   ${props =>
     props.isVisible &&

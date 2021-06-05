@@ -25,8 +25,13 @@ const SelectBarber: React.FC<SelectBarberProps> = ({
 
   return (
     <>
-      <Container isFocused={isFocused} style={containerStyle}>
+      <Container
+        className="viewport"
+        isFocused={isFocused}
+        style={containerStyle}
+      >
         <div
+          className="content"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           tabIndex={-1}

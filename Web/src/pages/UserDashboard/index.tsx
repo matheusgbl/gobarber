@@ -1,4 +1,5 @@
-/* eslint-disable prefer-destructuring */
+/* eslint-disable no-new */
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import React, {
@@ -50,8 +51,10 @@ import logo from '../../assets/logo.svg';
 
 import BarberSelection from '../../components/BarberSelection';
 import AppointmentSelection from '../../components/AppointmentSelection';
+
 import Button from '../../components/Button';
 import HoursSelection from '../../components/HoursSelection';
+
 import getValidationErrors from '../../utils/getValidationErrors';
 
 interface MonthAvailabilityItem {
