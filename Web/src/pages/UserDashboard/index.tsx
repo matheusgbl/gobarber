@@ -295,8 +295,6 @@ const UserDashboard: React.FC = () => {
     return dates;
   }, [currentMonth, monthAvailability]);
 
-  console.log(selectedBarber);
-
   return (
     <Container>
       <Header>
