@@ -1,9 +1,4 @@
-import React, {
-  InputHTMLAttributes,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
+import React, { InputHTMLAttributes, useRef, useState } from 'react';
 import 'moment/locale/pt-br';
 
 import { Container, List } from './styles';
@@ -22,14 +17,16 @@ const HoursSelection: React.FC<HoursSelectionProps> = ({
 
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleInputFocus = useCallback(() => {
-    setIsFocused(true);
-  }, []);
-
   return (
     <>
       <Container style={containerStyle} isFocused={isFocused}>
-        <div onFocus={handleInputFocus} ref={hourRef} {...rest} tabIndex={-1}>
+        <div
+          onBlur={() => setIsFocused(false)}
+          onFocus={() => setIsFocused(true)}
+          ref={hourRef}
+          {...rest}
+          tabIndex={-1}
+        >
           <List tabIndex={-1}>
             <li>{hour}</li>
           </List>

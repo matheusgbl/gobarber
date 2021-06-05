@@ -29,6 +29,7 @@ import * as Yup from 'yup';
 import { Form } from '@unform/web';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
+import { useToast } from '../../hooks/toast';
 
 import {
   Container,
@@ -90,6 +91,7 @@ interface AppointmentFormData {
 
 const UserDashboard: React.FC = () => {
   const { signOut, user } = useAuth();
+  const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -151,15 +153,32 @@ const UserDashboard: React.FC = () => {
         });
 
         await api.post('/appointments', data);
+
+        window.scrollTo(0, 0);
+
+        addToast({
+          title: 'Agendamento concluído com êxito!',
+          description: `Seu agendamento de ${data.service} foi agendado para ${data.date}.`,
+          type: 'success',
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
           formRef.current?.setErrors(errors);
+          addToast({
+            title: 'Falha ao agendar serviço!',
+            description:
+              'Ocorreu uma falha ao criar seu agendamento, por favor, verifique os campos e tente novamente.',
+            type: 'error',
+          });
         }
       }
     },
-    [selectedService, formattedDate, selectedBarber],
+    [selectedService, formattedDate, selectedBarber, addToast],
   );
 
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
@@ -275,6 +294,8 @@ const UserDashboard: React.FC = () => {
 
     return dates;
   }, [currentMonth, monthAvailability]);
+
+  console.log(selectedBarber);
 
   return (
     <Container>
