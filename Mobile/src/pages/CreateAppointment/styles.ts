@@ -31,7 +31,6 @@ export const Header = styled.View`
   background: #312e38;
 
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
 `;
 

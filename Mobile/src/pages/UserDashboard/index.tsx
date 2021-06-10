@@ -90,7 +90,15 @@ const UserDashboard: React.FC = () => {
         renderItem={({ item: provider }) => (
           <ProviderContainer
             onPress={() => navigateToCreateAppointment(provider.id)}>
-            <ProviderAvatar source={{ uri: provider.avatar_url }} />
+            {provider.avatar_url ? (
+              <ProviderAvatar source={{ uri: provider.avatar_url }} />
+            ) : (
+              <Avatar.Text
+                color="#fff"
+                style={{ backgroundColor: '#ff9000' }}
+                label={provider.name[0]}
+              />
+            )}
 
             <ProviderInfo>
               <ProviderName>{provider.name}</ProviderName>

@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable consistent-return */
 /* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/ban-types */
 import React, { useCallback, useRef, useState } from 'react';
 import { Image, ScrollView, TextInput, Alert, Switch } from 'react-native';
 
@@ -33,7 +31,6 @@ import {
 
 import logo from '../../assets/logo.png';
 import bgDetail from '../../assets/bg_detail.png';
-import api from '../../services/api';
 
 interface SignInFormData {
   email: string;
@@ -66,7 +63,6 @@ const SignIn: React.FC = () => {
         });
 
         data.isBarber = isEnabled;
-        console.log(data);
 
         await schema.validate(data, {
           abortEarly: false,
