@@ -78,7 +78,9 @@ const SignIn: React.FC = () => {
           isBarber: data.isBarber,
         });
 
-        navigation.navigate('Dashboard');
+        data.isBarber === false
+          ? navigation.navigate('UserDashboard')
+          : console.log('not barber');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);

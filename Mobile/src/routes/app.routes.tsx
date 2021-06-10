@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Dashboard from '../pages/Dashboard';
+import UserDashboard from '../pages/UserDashboard';
 
 import Profile from '../pages/Profile';
 import CreateAppointment from '../pages/CreateAppointment';
@@ -15,7 +15,7 @@ const AppRoutes: React.FC = () => (
       headerShown: false,
       cardStyle: { backgroundColor: '#232129' },
     }}>
-    <App.Screen name="Dashboard" component={Dashboard} />
+    <App.Screen name="UserDashboard" component={UserDashboard} />
 
     <App.Screen name="CreateAppointment" component={CreateAppointment} />
     <App.Screen name="AppointmentCreated" component={AppointmentCreated} />

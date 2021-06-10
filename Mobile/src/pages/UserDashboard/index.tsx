@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import Icon from 'react-native-vector-icons/AntDesign';
+import { Avatar } from 'react-native-paper';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
@@ -29,10 +30,10 @@ export interface Provider {
   avatar_url: string;
 }
 
-const Dashboard: React.FC = () => {
+const UserDashboard: React.FC = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
 
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { navigate } = useNavigation();
 
   useEffect(() => {
@@ -55,19 +56,36 @@ const Dashboard: React.FC = () => {
   return (
     <Container>
       <Header>
+        <ProfileButton onPress={navigateToProfile}>
+          {user.avatar_url ? (
+            <UserAvatar source={{ uri: user.avatar_url }} />
+          ) : (
+            <Avatar.Text
+              color="#fff"
+              style={{ backgroundColor: '#ff9000' }}
+              label={user.name[0]}
+            />
+          )}
+        </ProfileButton>
         <HeaderTitle>
           Bem vindo, {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
 
-        <ProfileButton onPress={navigateToProfile}>
-          <UserAvatar source={{ uri: user.avatar_url }} />
-        </ProfileButton>
+        <Icon
+          name="logout"
+          onPress={signOut}
+          size={24}
+          color="#ad1222"
+          style={{
+            marginRight: 10,
+          }}
+        />
       </Header>
 
       <ProvidersList
         data={providers}
-        ListHeaderComponent={<ProvidersHeader>Cabeleireiros</ProvidersHeader>}
+        ListHeaderComponent={<ProvidersHeader>Barbeiros</ProvidersHeader>}
         keyExtractor={(provider) => provider.id}
         renderItem={({ item: provider }) => (
           <ProviderContainer
@@ -94,4 +112,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default UserDashboard;

@@ -23,6 +23,7 @@ export const HeaderTitle = styled.Text`
   font-size: 20px;
   font-family: 'RobotoSlab-Regular';
   line-height: 28px;
+  margin-right: auto;
 `;
 
 export const UserName = styled.Text`
@@ -30,7 +31,9 @@ export const UserName = styled.Text`
   font-family: 'RobotoSlab-Medium';
 `;
 
-export const ProfileButton = styled.TouchableOpacity``;
+export const ProfileButton = styled.TouchableOpacity`
+  margin-right: 10px;
+`;
 
 export const UserAvatar = styled.Image`
   width: 56px;
