@@ -57,13 +57,13 @@ const Profile: React.FC = () => {
             .email('Digite um e-mail válido.'),
           old_password: Yup.string(),
           password: Yup.string().when('old_password', {
-            is: val => !!val.length,
+            is: (val: string) => !!val.length,
             then: Yup.string().required('Campo obrigatório'),
             otherwise: Yup.string(),
           }),
           password_confirmation: Yup.string()
             .when('old_password', {
-              is: val => !!val.length,
+              is: (val: string) => !!val.length,
               then: Yup.string().required('Campo obrigatório'),
               otherwise: Yup.string(),
             })
@@ -74,13 +74,8 @@ const Profile: React.FC = () => {
           abortEarly: false,
         });
 
-        const {
-          name,
-          email,
-          old_password,
-          password,
-          password_confirmation,
-        } = data;
+        const { name, email, old_password, password, password_confirmation } =
+          data;
 
         const formData = {
           name,
@@ -112,27 +107,26 @@ const Profile: React.FC = () => {
 
         Alert.alert(
           'Erro ao atualizar cadastro',
-          'Ocorreu um erro ao atualizar seu cadastro, verifique seus dados',
+          'Ocorreu um erro ao atualizar seu cadastro, verifique seus dados'
         );
       }
     },
-    [navigation, updateUser],
+    [navigation, updateUser]
   );
 
   const handleUpdateAvatar = useCallback(() => {
-    ImagePicker.showImagePicker(
+    ImagePicker.launchImageLibrary(
       {
-        title: 'Selecione uma foto',
-        cancelButtonTitle: 'Cancelar',
-        takePhotoButtonTitle: 'Usar câmera',
-        chooseFromLibraryButtonTitle: 'Escolher da galeria',
+        mediaType: 'photo',
+        selectionLimit: 1,
+        quality: 0.8,
       },
-      response => {
+      (response) => {
         if (response.didCancel) {
           return;
         }
 
-        if (response.error) {
+        if (response.errorMessage) {
           Alert.alert('Erro ao atualizar sua foto');
           return;
         }
@@ -142,13 +136,13 @@ const Profile: React.FC = () => {
         data.append('avatar', {
           type: 'images/jpeg',
           name: `${user.id}.jpg`,
-          uri: response.uri,
+          uri: response,
         });
 
-        api.patch('/users/avatar', data).then(apiResponse => {
+        api.patch('/users/avatar', data).then((apiResponse) => {
           updateUser(apiResponse.data);
         });
-      },
+      }
     );
   }, [user.id, updateUser]);
 
@@ -160,8 +154,7 @@ const Profile: React.FC = () => {
     <>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+        contentContainerStyle={{ flex: 1 }}>
         <Container>
           <BackButton onPress={handleGoBack}>
             <Icon name="arrowleft" size={24} color="#eee" />
@@ -242,8 +235,7 @@ const Profile: React.FC = () => {
             <Button
               onPress={() => {
                 formRef.current?.submitForm();
-              }}
-            >
+              }}>
               Confirmar mudanças
             </Button>
           </Form>

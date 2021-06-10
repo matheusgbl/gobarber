@@ -60,7 +60,7 @@ export const ProvidersList = styled(FlatList as new () => FlatList<Provider>)`
 `;
 
 export const ProviderContainer = styled(RectButton)<ProviderContainerProps>`
-  background: ${props => (props.selected ? '#ff9000' : '#3e3b47')};
+  background: ${(props) => (props.selected ? '#ff9000' : '#3e3b47')};
   flex-direction: row;
   align-items: center;
   padding: 8px 12px;
@@ -78,7 +78,7 @@ export const ProviderName = styled.Text<ProviderNameProps>`
   margin-left: 8px;
   font-family: 'RobotoSlab-Medium';
   font-size: 16px;
-  color: ${props => (props.selected ? '#3e3b47' : '#f4ede8')};
+  color: ${(props) => (props.selected ? '#3e3b47' : '#f4ede8')};
 `;
 
 export const Calendar = styled.View``;
@@ -130,15 +130,15 @@ export const SectionContent = styled.ScrollView.attrs({
 
 export const Hour = styled(RectButton)<HourProps>`
   padding: 12px;
-  background: ${props => (props.selected ? '#ff9000' : '#3e3b47')};
+  background: ${(props) => (props.selected ? '#ff9000' : '#3e3b47')};
   border-radius: 10px;
   margin-right: 8px;
 
-  opacity: ${props => (props.available ? 1 : 0.3)};
+  opacity: ${(props) => (props.available ? 1 : 0.3)};
 `;
 
 export const HourText = styled.Text<HourTextProps>`
-  color: ${props => (props.selected ? '#3e3b47' : '#f4ede8')};
+  color: ${(props) => (props.selected ? '#3e3b47' : '#f4ede8')};
   font-family: 'RobotoSlab-Regular';
   font-size: 16px;
 `;

@@ -36,7 +36,7 @@ const Dashboard: React.FC = () => {
   const { navigate } = useNavigation();
 
   useEffect(() => {
-    api.get('providers').then(response => {
+    api.get('providers').then((response) => {
       setProviders(response.data);
     });
   }, []);
@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
     (providerId: string) => {
       navigate('CreateAppointment', { providerId });
     },
-    [navigate],
+    [navigate]
   );
 
   return (
@@ -68,11 +68,10 @@ const Dashboard: React.FC = () => {
       <ProvidersList
         data={providers}
         ListHeaderComponent={<ProvidersHeader>Cabeleireiros</ProvidersHeader>}
-        keyExtractor={provider => provider.id}
+        keyExtractor={(provider) => provider.id}
         renderItem={({ item: provider }) => (
           <ProviderContainer
-            onPress={() => navigateToCreateAppointment(provider.id)}
-          >
+            onPress={() => navigateToCreateAppointment(provider.id)}>
             <ProviderAvatar source={{ uri: provider.avatar_url }} />
 
             <ProviderInfo>

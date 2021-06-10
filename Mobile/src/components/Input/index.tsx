@@ -28,7 +28,7 @@ interface InputRef {
 
 const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   { name, icon, containerStyle = {}, ...rest },
-  ref,
+  ref
 ) => {
   const inputElementRef = useRef<any>(null);
 
@@ -73,11 +73,11 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 
       <TextInput
         ref={inputElementRef}
-        placeholderTextColor="#666360"
         defaultValue={defaultValue}
+        placeholderTextColor="#666360"
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
-        onChangeText={value => {
+        onChangeText={(value) => {
           inputValueRef.current.value = value;
         }}
         {...rest}

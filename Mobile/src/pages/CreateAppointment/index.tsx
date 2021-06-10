@@ -62,7 +62,7 @@ const CreateAppointment: React.FC = () => {
   const [selectedHour, setSelectedHour] = useState(0);
   const [providers, setProviders] = useState<Provider[]>();
   const [selectedProvider, setSelectedProvider] = useState(
-    routeParams.providerId,
+    routeParams.providerId
   );
 
   const handleSelectProvider = useCallback((providerId: string) => {
@@ -70,7 +70,7 @@ const CreateAppointment: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('providers').then(response => {
+    api.get('providers').then((response) => {
       setProviders(response.data);
     });
   }, []);
@@ -84,7 +84,7 @@ const CreateAppointment: React.FC = () => {
           day: selectedDate.getDate(),
         },
       })
-      .then(response => {
+      .then((response) => {
         setAvailability(response.data);
       });
   }, [selectedDate, selectedProvider]);
@@ -94,7 +94,7 @@ const CreateAppointment: React.FC = () => {
   }, [goBack]);
 
   const handleToogleDatePicker = useCallback(() => {
-    setShowDatePicker(state => !state);
+    setShowDatePicker((state) => !state);
   }, []);
 
   const handleDateChanged = useCallback(
@@ -108,7 +108,7 @@ const CreateAppointment: React.FC = () => {
         setSelectedDate(date);
       }
     },
-    [],
+    []
   );
 
   const handleSelectHour = useCallback((hour: number) => {
@@ -131,7 +131,7 @@ const CreateAppointment: React.FC = () => {
     } catch (err) {
       Alert.alert(
         'Erro ao criar agendamento',
-        'Ocorreu um erro ao criar o agendamento, tente novamente',
+        'Ocorreu um erro ao criar o agendamento, tente novamente'
       );
     }
   }, [navigate, selectedDate, selectedHour, selectedProvider]);
@@ -177,12 +177,11 @@ const CreateAppointment: React.FC = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             data={providers}
-            keyExtractor={provider => provider.id}
+            keyExtractor={(provider) => provider.id}
             renderItem={({ item: provider }) => (
               <ProviderContainer
                 onPress={() => handleSelectProvider(provider.id)}
-                selected={provider.id === selectedProvider}
-              >
+                selected={provider.id === selectedProvider}>
                 <ProviderAvatar source={{ uri: provider.avatar_url }} />
                 <ProviderName selected={provider.id === selectedProvider}>
                   {provider.name}
@@ -226,8 +225,7 @@ const CreateAppointment: React.FC = () => {
                   selected={selectedHour === hour}
                   onPress={() => handleSelectHour(hour)}
                   available={available}
-                  key={hourFormatted}
-                >
+                  key={hourFormatted}>
                   <HourText selected={selectedHour === hour}>
                     {hourFormatted}
                   </HourText>
@@ -247,8 +245,7 @@ const CreateAppointment: React.FC = () => {
                 selected={selectedHour === hour}
                 onPress={() => handleSelectHour(hour)}
                 available={available}
-                key={hourFormatted}
-              >
+                key={hourFormatted}>
                 <HourText selected={selectedHour === hour}>
                   {hourFormatted}
                 </HourText>
