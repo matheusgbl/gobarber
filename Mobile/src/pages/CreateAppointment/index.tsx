@@ -130,6 +130,7 @@ const CreateAppointment: React.FC = () => {
 
       await api.post('appointments', {
         provider_id: selectedProvider,
+        service: selectedService,
         date,
       });
 
@@ -140,7 +141,7 @@ const CreateAppointment: React.FC = () => {
         'Ocorreu um erro ao criar o agendamento, tente novamente'
       );
     }
-  }, [navigate, selectedDate, selectedHour, selectedProvider]);
+  }, [navigate, selectedDate, selectedHour, selectedProvider, selectedService]);
 
   const morningAvailability = useMemo(() => {
     return availability
