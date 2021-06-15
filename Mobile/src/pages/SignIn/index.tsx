@@ -73,10 +73,6 @@ const SignIn: React.FC = () => {
           password: data.password,
           isBarber: data.isBarber,
         });
-
-        data.isBarber === false
-          ? navigation.navigate('UserDashboard')
-          : console.log('not barber');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -92,7 +88,7 @@ const SignIn: React.FC = () => {
         );
       }
     },
-    [signIn, navigation, isEnabled]
+    [signIn, isEnabled]
   );
 
   return (

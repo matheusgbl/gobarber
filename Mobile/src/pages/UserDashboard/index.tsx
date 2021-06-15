@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-one-expression-per-line */
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -68,7 +67,8 @@ const UserDashboard: React.FC = () => {
           )}
         </ProfileButton>
         <HeaderTitle>
-          Bem vindo, {'\n'}
+          Bem vindo,
+          {'\n'}
           <UserName>{user.name}</UserName>
         </HeaderTitle>
 
