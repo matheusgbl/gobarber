@@ -12,6 +12,14 @@ interface ProviderNameProps {
   selected: boolean;
 }
 
+interface ServiceContainerProps {
+  selected: boolean;
+}
+
+interface ServiceNameProps {
+  selected: boolean;
+}
+
 interface HourProps {
   available: boolean;
   selected: boolean;
@@ -35,12 +43,14 @@ export const Header = styled.View`
 `;
 
 export const BackBtn = styled.TouchableOpacity``;
+
 export const HeaderTitle = styled.Text`
   color: #f4ede8;
   font-family: 'RobotoSlab-Medium';
   font-size: 20px;
   margin-left: 16px;
 `;
+
 export const UserAvatar = styled.Image`
   width: 56px;
   height: 56px;
@@ -80,10 +90,26 @@ export const ProviderName = styled.Text<ProviderNameProps>`
   color: ${(props) => (props.selected ? '#3e3b47' : '#f4ede8')};
 `;
 
-export const ServiceList = styled.Text`
-  color: #f4ede8;
+export const ServiceListContainer = styled.ScrollView.attrs({
+  contentContainerStyle: { paddingHorizontal: 24 },
+  horizontal: true,
+  showsHorizontalScrollIndicator: false,
+})``;
+
+export const ServiceList = styled(RectButton)<ServiceContainerProps>`
+  background: ${(props) => (props.selected ? '#ff9000' : '#3e3b47')};
+  padding: 18px 12px;
+  border-radius: 10px;
+  margin-right: 16px;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const ServiceName = styled.Text<ServiceNameProps>`
+  margin-left: 8px;
   font-family: 'RobotoSlab-Medium';
-  font-size: 20px;
+  font-size: 16px;
+  color: ${(props) => (props.selected ? '#3e3b47' : '#f4ede8')};
 `;
 
 export const Calendar = styled.View``;
