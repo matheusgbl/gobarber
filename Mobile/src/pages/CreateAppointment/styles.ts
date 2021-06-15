@@ -80,6 +80,12 @@ export const ProviderName = styled.Text<ProviderNameProps>`
   color: ${(props) => (props.selected ? '#3e3b47' : '#f4ede8')};
 `;
 
+export const ServiceList = styled.Text`
+  color: #f4ede8;
+  font-family: 'RobotoSlab-Medium';
+  font-size: 20px;
+`;
+
 export const Calendar = styled.View``;
 
 export const Title = styled.Text`

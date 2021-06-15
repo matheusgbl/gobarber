@@ -5,8 +5,7 @@ import { format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Platform, Alert } from 'react-native';
-import { Avatar } from 'react-native-paper';
-import { useAuth } from '../../hooks/auth';
+import { Avatar, List } from 'react-native-paper';
 import api from '../../services/api';
 
 import {
@@ -14,13 +13,13 @@ import {
   Header,
   BackBtn,
   HeaderTitle,
-  UserAvatar,
   Content,
   ProvidersListContainer,
   ProvidersList,
   ProviderContainer,
   ProviderAvatar,
   ProviderName,
+  ServiceList,
   Calendar,
   Title,
   OpenDatePickerButton,
@@ -52,7 +51,6 @@ interface AvailabilityItem {
 
 const CreateAppointment: React.FC = () => {
   const route = useRoute();
-  const { user } = useAuth();
   const { goBack, navigate } = useNavigation();
 
   const routeParams = route.params as RouteParams;
@@ -65,6 +63,10 @@ const CreateAppointment: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState(
     routeParams.providerId
   );
+
+  const [expanded, setExpanded] = React.useState(true);
+
+  const handlePress = () => setExpanded(!expanded);
 
   const handleSelectProvider = useCallback((providerId: string) => {
     setSelectedProvider(providerId);
@@ -198,7 +200,19 @@ const CreateAppointment: React.FC = () => {
             )}
           />
         </ProvidersListContainer>
-
+        <ServiceList>
+          <Title>Selecione o serviço</Title>
+          <List.Section>
+            <List.Accordion
+              title="Serviços disponíveis"
+              left={(props) => <List.Icon {...props} icon="scissors-cutting" />}
+              expanded={expanded}
+              onPress={handlePress}>
+              <List.Item title="First item" />
+              <List.Item title="Second item" />
+            </List.Accordion>
+          </List.Section>
+        </ServiceList>
         <Calendar>
           <Title>Escolha a data</Title>
 
