@@ -11,6 +11,10 @@ import {
   ProfileButton,
   UserAvatar,
   UserName,
+  AppointmentContainer,
+  Title,
+  MorningAppointments,
+  AfternoonAppointments,
 } from './styles';
 
 const BarberDashboard: React.FC = () => {
@@ -51,6 +55,18 @@ const BarberDashboard: React.FC = () => {
           }}
         />
       </Header>
+
+      <AppointmentContainer>
+        <Title>Agendamentos de hoje</Title>
+
+        <MorningAppointments>
+          <Title>Serviços da manhã</Title>
+        </MorningAppointments>
+
+        <AfternoonAppointments>
+          <Title>Serviços da manhã</Title>
+        </AfternoonAppointments>
+      </AppointmentContainer>
     </Container>
   );
 };

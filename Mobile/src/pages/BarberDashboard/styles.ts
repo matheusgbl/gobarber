@@ -37,3 +37,14 @@ export const UserAvatar = styled.Image`
   height: 56px;
   border-radius: 28px;
 `;
+
+export const AppointmentContainer = styled.View``;
+
+export const Title = styled.Text`
+  padding: 20px;
+  color: #fff;
+  font-size: 24px;
+`;
+
+export const MorningAppointments = styled.View``;
+export const AfternoonAppointments = styled.View``;
