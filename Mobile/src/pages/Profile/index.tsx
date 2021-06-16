@@ -9,6 +9,7 @@ import { FormHandles } from '@unform/core';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ImagePicker from 'react-native-image-picker';
 
+import { Avatar } from 'react-native-paper';
 import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -95,7 +96,7 @@ const Profile: React.FC = () => {
 
         Alert.alert('Perfil atualizado com sucesso.');
 
-        navigation.navigate('Dashboard');
+        navigation.goBack();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -161,7 +162,15 @@ const Profile: React.FC = () => {
           </BackButton>
 
           <UserAvatarButton onPress={handleUpdateAvatar}>
-            <UserAvatar source={{ uri: user.avatar_url }} />
+            {user.avatar_url ? (
+              <UserAvatar source={{ uri: user.avatar_url }} />
+            ) : (
+              <Avatar.Text
+                color="#fff"
+                style={{ backgroundColor: '#ff9000' }}
+                label={user.name[0]}
+              />
+            )}
           </UserAvatarButton>
 
           <View>
