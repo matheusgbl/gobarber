@@ -27,6 +27,7 @@ export interface Provider {
   id: string;
   name: string;
   avatar_url: string;
+  isBarber: boolean;
 }
 
 const UserDashboard: React.FC = () => {
@@ -36,8 +37,9 @@ const UserDashboard: React.FC = () => {
   const { navigate } = useNavigation();
 
   useEffect(() => {
-    api.get('providers').then((response) => {
-      setProviders(response.data);
+    api.get<Provider[]>('providers').then((response) => {
+      const isBarber = response.data.filter((provider) => provider.isBarber);
+      setProviders(isBarber);
     });
   }, []);
 
