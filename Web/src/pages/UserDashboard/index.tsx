@@ -375,7 +375,11 @@ const UserDashboard: React.FC = () => {
           </AnimationLeft1>
 
           <DateAndHour isVisible={calendarVisible}>
-            <h2>Horários disponíveis :</h2>
+            {availableHoursList.filter(hours => hours.available).length <= 0 ? (
+              <h2>Sem horários disponíveis depois das 17:00h</h2>
+            ) : (
+              <h2>Horários disponíveis :</h2>
+            )}
 
             <Hour className="date-and-hour">
               {availableHoursList.map(hours => (
