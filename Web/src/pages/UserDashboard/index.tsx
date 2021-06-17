@@ -309,9 +309,6 @@ const UserDashboard: React.FC = () => {
   const nowHour = new Date().getHours();
   const today = new Date().getDate();
 
-  // console.log(selectedDate.getDate() === today);
-  console.log(nowHour);
-
   return (
     <Container>
       <Header>
@@ -394,7 +391,7 @@ const UserDashboard: React.FC = () => {
 
           <DateAndHour isVisible={calendarVisible}>
             {nowHour >= 17 && today === selectedDate.getDate() ? (
-              <h2>Sem horários disponíveis após 17:00H</h2>
+              <h2>Sem horários disponíveis após as 17h</h2>
             ) : (
               <h2>Horários disponíveis :</h2>
             )}
