@@ -1,6 +1,3 @@
-/* eslint-disable no-new */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import React, {
   useCallback,
@@ -20,6 +17,8 @@ import {
   AiOutlineUser,
 } from 'react-icons/ai';
 
+import { ClockLoader } from 'react-spinners';
+
 import Select from 'react-select';
 
 import { Link } from 'react-router-dom';
@@ -27,6 +26,7 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
 import { Form } from '@unform/web';
+import { css } from '@emotion/react';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import { useToast } from '../../hooks/toast';
@@ -93,6 +93,9 @@ const UserDashboard: React.FC = () => {
   const { signOut, user } = useAuth();
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
+
+  const [loading, setLoading] = useState(false);
+  const [color] = useState('#ff9000');
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -244,6 +247,8 @@ const UserDashboard: React.FC = () => {
   }, [selectedDate]);
 
   useEffect(() => {
+    setProviderHour([]);
+    setLoading(true);
     setTimeout(() => {
       api
         .get<ProviderAvailable[]>(
@@ -258,8 +263,9 @@ const UserDashboard: React.FC = () => {
         )
         .then(response => {
           setProviderHour(response.data);
+          setLoading(false);
         });
-    }, 500);
+    }, 1500);
   }, [selectedBarber, selectedDate]);
 
   const availableHoursList = useMemo(() => {
@@ -294,6 +300,17 @@ const UserDashboard: React.FC = () => {
 
     return dates;
   }, [currentMonth, monthAvailability]);
+
+  const override = css`
+    display: block;
+    margin: 90px auto;
+  `;
+
+  const nowHour = new Date().getHours();
+  const today = new Date().getDate();
+
+  // console.log(selectedDate.getDate() === today);
+  console.log(nowHour);
 
   return (
     <Container>
@@ -361,6 +378,7 @@ const UserDashboard: React.FC = () => {
               })}
               options={options}
               onChange={option => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 setSelectedService(option!.value);
               }}
             />
@@ -375,12 +393,17 @@ const UserDashboard: React.FC = () => {
           </AnimationLeft1>
 
           <DateAndHour isVisible={calendarVisible}>
-            {availableHoursList.filter(hours => hours.available).length <= 0 ? (
-              <h2>Sem horários disponíveis depois das 17:00h</h2>
+            {nowHour >= 17 && today === selectedDate.getDate() ? (
+              <h2>Sem horários disponíveis após 17:00H</h2>
             ) : (
               <h2>Horários disponíveis :</h2>
             )}
-
+            <ClockLoader
+              loading={loading}
+              color={color}
+              css={override}
+              size={150}
+            />
             <Hour className="date-and-hour">
               {availableHoursList.map(hours => (
                 <HoursSelection

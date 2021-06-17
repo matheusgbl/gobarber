@@ -3,8 +3,6 @@ import { shade } from 'polished';
 
 import signUpBkg from '../../assets/sign-up-background.png';
 
-import 'antd/dist/antd.css';
-
 export const Container = styled.div`
   height: 100vh;
 
