@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { AiOutlineLogin, AiFillMail, AiFillLock } from 'react-icons/ai';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -32,6 +32,8 @@ const SignIn: React.FC = () => {
 
   const history = useHistory();
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
       try {
@@ -49,12 +51,15 @@ const SignIn: React.FC = () => {
           abortEarly: false,
         });
 
+        setLoading(true);
+
         await signIn({
           email: data.email,
           password: data.password,
           isBarber: data.isBarber,
         });
 
+        setLoading(false);
         return data.isBarber === true
           ? history.push('/dashboard/barber')
           : history.push('/dashboard');
@@ -101,7 +106,9 @@ const SignIn: React.FC = () => {
               label="Fazer login como barbeiro"
             />
 
-            <Button type="submit">Entrar</Button>
+            <Button loading={loading} type="submit">
+              Entrar
+            </Button>
 
             <Link to="/forgot-password">Esqueci minha senha</Link>
           </Form>

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   AiOutlineArrowLeft,
   AiFillMail,
@@ -35,6 +35,7 @@ const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
@@ -53,9 +54,11 @@ const SignUp: React.FC = () => {
         await schema.validate(data, {
           abortEarly: false,
         });
+        setLoading(true);
 
         await api.post('/users', data);
 
+        setLoading(false);
         history.push('/');
 
         addToast({
@@ -108,7 +111,9 @@ const SignUp: React.FC = () => {
               label="Realizar cadastro como barbeiro"
             />
 
-            <Button type="submit">Cadastrar</Button>
+            <Button loading={loading} type="submit">
+              Cadastrar
+            </Button>
           </Form>
 
           <Link to="/">
