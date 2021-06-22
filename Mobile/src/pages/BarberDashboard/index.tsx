@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable import/no-duplicates */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useNavigation } from '@react-navigation/native';
 import { format, isAfter, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Avatar } from 'react-native-paper';
+import { Avatar, Modal, Provider, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../hooks/auth';
 
@@ -20,16 +19,24 @@ import {
   UserName,
   AppointmentContainer,
   DateText,
+  ModalTitle,
+  ModalInfo,
+  ModalAvatar,
+  ModalUser,
+  ModalService,
+  ModalDate,
+  ModalButton,
   Title,
+  NextAppointmentContainer,
   TextAppointment,
   AppointmentInfo,
   AppointmentName,
+  AppointmentAbout,
+  AppointmentDetails,
   AppointmentAvatar,
-  AppointmentService,
-  AppointmentDate,
   NextAppointment,
-  MorningAppointments,
-  AfternoonAppointments,
+  MorningAppointmentsContainer,
+  AfternoonAppointmentsContainer,
 } from './styles';
 
 interface Appointment {
@@ -51,6 +58,18 @@ const BarberDashboard: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const [today] = useState(new Date());
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const modalStyle = {
+    backgroundColor: '#3b3b47',
+    padding: 20,
+    borderRadius: 10,
+    margin: 'auto',
+    marginBottom: 100,
+    height: 150,
+  };
 
   useEffect(() => {
     api
@@ -86,7 +105,10 @@ const BarberDashboard: React.FC = () => {
 
   const afternoonAppointments = useMemo(() => {
     return appointments.filter((appointment) => {
-      return parseISO(appointment.date).getHours() >= 12;
+      return (
+        parseISO(appointment.date).getHours() >= 12 &&
+        parseISO(appointment.date).getHours() >= new Date().getHours()
+      );
     });
   }, [appointments]);
 
@@ -135,45 +157,117 @@ const BarberDashboard: React.FC = () => {
         <Title>Agendamentos</Title>
         <DateText>{todayDateAsText}</DateText>
 
-        <TextAppointment>Próximo agendamento</TextAppointment>
-        {nextAppointment ? (
-          <NextAppointment>
-            <AppointmentInfo>
-              {nextAppointment.user.avatar_url ? (
-                <AppointmentAvatar
-                  source={{ uri: nextAppointment.user.avatar_url }}
-                />
-              ) : (
-                <Avatar.Text
-                  color="#fff"
-                  style={{ backgroundColor: '#ff9000', left: -8 }}
-                  label={nextAppointment.user.name[0]}
-                />
-              )}
-              <AppointmentName numberOfLines={2}>
-                Cliente: {nextAppointment.user.name}
-              </AppointmentName>
-              <AppointmentService numberOfLines={2}>
-                Serviço: {nextAppointment.service}
-              </AppointmentService>
-              <AppointmentDate>
-                Horário: {nextAppointment.hourFormatted}
-              </AppointmentDate>
-            </AppointmentInfo>
-          </NextAppointment>
-        ) : (
-          <NextAppointment>
-            <TextAppointment>Não há agendamentos para hoje</TextAppointment>
-          </NextAppointment>
-        )}
+        <Provider>
+          <Portal>
+            <Modal
+              visible={visible}
+              onDismiss={hideModal}
+              contentContainerStyle={modalStyle}>
+              <ModalTitle>Detalhes do agendamento :</ModalTitle>
+              <ModalInfo>
+                <ModalAvatar>Avatar</ModalAvatar>
+                <ModalUser>User</ModalUser>
+                <ModalService>Service</ModalService>
+                <ModalDate>Date</ModalDate>
+                <ModalButton>Voltar</ModalButton>
+              </ModalInfo>
+            </Modal>
+          </Portal>
 
-        <MorningAppointments>
-          <Title>Agendamentos da manhã :</Title>
-        </MorningAppointments>
+          <NextAppointmentContainer>
+            <TextAppointment>Próximo agendamento :</TextAppointment>
+            {nextAppointment ? (
+              <NextAppointment key={nextAppointment.id} onPress={showModal}>
+                <AppointmentInfo>
+                  {nextAppointment.user.avatar_url ? (
+                    <AppointmentAvatar
+                      source={{ uri: nextAppointment.user.avatar_url }}
+                    />
+                  ) : (
+                    <Avatar.Text
+                      color="#fff"
+                      style={{
+                        backgroundColor: '#ff9000',
+                        left: -10,
+                      }}
+                      label={nextAppointment.user.name[0]}
+                    />
+                  )}
+                  <AppointmentAbout>
+                    <AppointmentName>
+                      Cliente: {nextAppointment.user.name}
+                    </AppointmentName>
+                    <AppointmentDetails>
+                      Toque para mais informações !
+                    </AppointmentDetails>
+                  </AppointmentAbout>
+                </AppointmentInfo>
+              </NextAppointment>
+            ) : (
+              <TextAppointment style={{ fontSize: 13 }}>
+                Não há agendamentos para hoje!
+              </TextAppointment>
+            )}
+          </NextAppointmentContainer>
 
-        <AfternoonAppointments>
-          <Title>Agendamentos da tarde :</Title>
-        </AfternoonAppointments>
+          <MorningAppointmentsContainer>
+            <Title>Agendamentos da manhã :</Title>
+            {morningAppointments.map(({ user: morningUser, id }) => (
+              <NextAppointment key={id}>
+                <AppointmentInfo>
+                  {morningUser.avatar_url ? (
+                    <AppointmentAvatar
+                      source={{ uri: morningUser.avatar_url }}
+                    />
+                  ) : (
+                    <Avatar.Text
+                      color="#fff"
+                      style={{ backgroundColor: '#ff9000', left: -10 }}
+                      label={morningUser.name[0]}
+                    />
+                  )}
+                  <AppointmentAbout>
+                    <AppointmentName>
+                      Cliente: {morningUser.name}
+                    </AppointmentName>
+                    <AppointmentDetails>
+                      Toque para mais informações !
+                    </AppointmentDetails>
+                  </AppointmentAbout>
+                </AppointmentInfo>
+              </NextAppointment>
+            ))}
+          </MorningAppointmentsContainer>
+
+          <AfternoonAppointmentsContainer>
+            <Title>Agendamentos da tarde :</Title>
+            {afternoonAppointments.map(({ user: afternoonUser, id }) => (
+              <NextAppointment key={id}>
+                <AppointmentInfo>
+                  {afternoonUser.avatar_url ? (
+                    <AppointmentAvatar
+                      source={{ uri: afternoonUser.avatar_url }}
+                    />
+                  ) : (
+                    <Avatar.Text
+                      color="#fff"
+                      style={{ backgroundColor: '#ff9000', left: -10 }}
+                      label={afternoonUser.name[0]}
+                    />
+                  )}
+                  <AppointmentAbout>
+                    <AppointmentName>
+                      Cliente: {afternoonUser.name}
+                    </AppointmentName>
+                    <AppointmentDetails>
+                      Toque para mais informações !
+                    </AppointmentDetails>
+                  </AppointmentAbout>
+                </AppointmentInfo>
+              </NextAppointment>
+            ))}
+          </AfternoonAppointmentsContainer>
+        </Provider>
       </AppointmentContainer>
     </Container>
   );
