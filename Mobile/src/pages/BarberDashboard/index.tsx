@@ -258,8 +258,39 @@ const BarberDashboard: React.FC = () => {
             <MorningAppointmentsContainer>
               <Title>Agendamentos da manhã :</Title>
               {morningAppointments.map(
-                ({ user: morningUser, id, hourFormatted }) => (
-                  <NextAppointment key={id}>
+                ({ user: morningUser, id, hourFormatted, service }) => (
+                  <NextAppointment key={id} onPress={showModal}>
+                    <Portal>
+                      <Modal
+                        visible={visible}
+                        onDismiss={hideModal}
+                        contentContainerStyle={modalStyle}>
+                        <ModalTitle>Detalhes do agendamento :</ModalTitle>
+                        <ModalInfo>
+                          {morningUser.avatar_url ? (
+                            <AppointmentAvatar
+                              source={{ uri: morningUser.avatar_url }}
+                            />
+                          ) : (
+                            <Avatar.Text
+                              color="#fff"
+                              style={{
+                                backgroundColor: '#ff9000',
+                              }}
+                              label={morningUser.name[0]}
+                            />
+                          )}
+                          <ModalDetails>
+                            <ModalUser>Cliente: {morningUser.name}</ModalUser>
+                            <ModalService>Serviço: {service}</ModalService>
+                            <ModalDate>Horário: {hourFormatted}</ModalDate>
+                            <ModalButton onPress={hideModal}>
+                              <TextBtn>Voltar</TextBtn>
+                            </ModalButton>
+                          </ModalDetails>
+                        </ModalInfo>
+                      </Modal>
+                    </Portal>
                     <AppointmentInfo>
                       {morningUser.avatar_url ? (
                         <AppointmentAvatar
@@ -292,8 +323,39 @@ const BarberDashboard: React.FC = () => {
             <AfternoonAppointmentsContainer>
               <Title>Agendamentos da tarde :</Title>
               {afternoonAppointments.map(
-                ({ user: afternoonUser, id, hourFormatted }) => (
-                  <NextAppointment key={id}>
+                ({ user: afternoonUser, id, hourFormatted, service }) => (
+                  <NextAppointment key={id} onPress={showModal}>
+                    <Portal>
+                      <Modal
+                        visible={visible}
+                        onDismiss={hideModal}
+                        contentContainerStyle={modalStyle}>
+                        <ModalTitle>Detalhes do agendamento :</ModalTitle>
+                        <ModalInfo>
+                          {afternoonUser.avatar_url ? (
+                            <AppointmentAvatar
+                              source={{ uri: afternoonUser.avatar_url }}
+                            />
+                          ) : (
+                            <Avatar.Text
+                              color="#fff"
+                              style={{
+                                backgroundColor: '#ff9000',
+                              }}
+                              label={afternoonUser.name[0]}
+                            />
+                          )}
+                          <ModalDetails>
+                            <ModalUser>Cliente: {afternoonUser.name}</ModalUser>
+                            <ModalService>Serviço: {service}</ModalService>
+                            <ModalDate>Horário: {hourFormatted}</ModalDate>
+                            <ModalButton onPress={hideModal}>
+                              <TextBtn>Voltar</TextBtn>
+                            </ModalButton>
+                          </ModalDetails>
+                        </ModalInfo>
+                      </Modal>
+                    </Portal>
                     <AppointmentInfo>
                       {afternoonUser.avatar_url ? (
                         <AppointmentAvatar
