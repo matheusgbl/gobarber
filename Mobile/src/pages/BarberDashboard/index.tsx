@@ -5,11 +5,13 @@ import { format, isAfter, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
-import { Avatar, Modal, Provider, Portal } from 'react-native-paper';
+import { Avatar, Provider, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../hooks/auth';
 
 import api from '../../services/api';
+
+import { CreateModal } from '../../components/CreateModal';
 
 import {
   Container,
@@ -20,14 +22,6 @@ import {
   UserName,
   AppointmentContainer,
   DateText,
-  ModalTitle,
-  ModalInfo,
-  ModalDetails,
-  ModalUser,
-  ModalService,
-  ModalDate,
-  ModalButton,
-  TextBtn,
   Title,
   NextAppointmentContainer,
   TextAppointment,
@@ -61,19 +55,19 @@ const BarberDashboard: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const [today] = useState(new Date());
-  const [visible, setVisible] = useState(false);
+  const [visible1, setVisible1] = useState(false);
+  const [visible2, setVisible2] = useState(false);
+  const [visible3, setVisible3] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const modalStyle = {
-    backgroundColor: '#3b3b47',
-    padding: 20,
-    borderRadius: 10,
-    margin: 'auto',
-    marginBottom: 100,
-    height: 150,
-  };
+  const showModal1 = () => setVisible1(true);
+  const hideModal1 = () => setVisible1(false);
+
+  const showModal2 = () => setVisible2(true);
+  const hideModal2 = () => setVisible2(false);
+
+  const showModal3 = () => setVisible3(true);
+  const hideModal3 = () => setVisible3(false);
 
   const wait = (timeout: number) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -123,7 +117,7 @@ const BarberDashboard: React.FC = () => {
     return appointments.filter((appointment) => {
       return (
         parseISO(appointment.date).getHours() >= 12 &&
-        parseISO(appointment.date).getHours() >= new Date().getHours()
+        parseISO(appointment.date).getHours() > new Date().getHours()
       );
     });
   }, [appointments]);
@@ -182,43 +176,15 @@ const BarberDashboard: React.FC = () => {
             <NextAppointmentContainer>
               <TextAppointment>Próximo agendamento :</TextAppointment>
               {nextAppointment ? (
-                <NextAppointment key={nextAppointment.id} onPress={showModal}>
+                <NextAppointment key={nextAppointment.id} onPress={showModal1}>
                   <Portal>
-                    <Modal
-                      visible={visible}
-                      onDismiss={hideModal}
-                      contentContainerStyle={modalStyle}>
-                      <ModalTitle>Detalhes do agendamento :</ModalTitle>
-                      <ModalInfo>
-                        {nextAppointment.user.avatar_url ? (
-                          <AppointmentAvatar
-                            source={{ uri: nextAppointment.user.avatar_url }}
-                          />
-                        ) : (
-                          <Avatar.Text
-                            color="#fff"
-                            style={{
-                              backgroundColor: '#ff9000',
-                            }}
-                            label={nextAppointment.user.name[0]}
-                          />
-                        )}
-                        <ModalDetails>
-                          <ModalUser>
-                            Cliente: {nextAppointment.user.name}
-                          </ModalUser>
-                          <ModalService>
-                            Serviço: {nextAppointment.service}
-                          </ModalService>
-                          <ModalDate>
-                            Horário: {nextAppointment.hourFormatted}
-                          </ModalDate>
-                          <ModalButton onPress={hideModal}>
-                            <TextBtn>Voltar</TextBtn>
-                          </ModalButton>
-                        </ModalDetails>
-                      </ModalInfo>
-                    </Modal>
+                    <CreateModal
+                      visible={visible1}
+                      dismiss={hideModal1}
+                      hourFormatted={nextAppointment.hourFormatted}
+                      service={nextAppointment.service}
+                      user={nextAppointment.user}
+                    />
                   </Portal>
                   <AppointmentInfo>
                     {nextAppointment.user.avatar_url ? (
@@ -259,37 +225,15 @@ const BarberDashboard: React.FC = () => {
               <Title>Agendamentos da manhã :</Title>
               {morningAppointments.map(
                 ({ user: morningUser, id, hourFormatted, service }) => (
-                  <NextAppointment key={id} onPress={showModal}>
+                  <NextAppointment key={id} onPress={showModal2}>
                     <Portal>
-                      <Modal
-                        visible={visible}
-                        onDismiss={hideModal}
-                        contentContainerStyle={modalStyle}>
-                        <ModalTitle>Detalhes do agendamento :</ModalTitle>
-                        <ModalInfo>
-                          {morningUser.avatar_url ? (
-                            <AppointmentAvatar
-                              source={{ uri: morningUser.avatar_url }}
-                            />
-                          ) : (
-                            <Avatar.Text
-                              color="#fff"
-                              style={{
-                                backgroundColor: '#ff9000',
-                              }}
-                              label={morningUser.name[0]}
-                            />
-                          )}
-                          <ModalDetails>
-                            <ModalUser>Cliente: {morningUser.name}</ModalUser>
-                            <ModalService>Serviço: {service}</ModalService>
-                            <ModalDate>Horário: {hourFormatted}</ModalDate>
-                            <ModalButton onPress={hideModal}>
-                              <TextBtn>Voltar</TextBtn>
-                            </ModalButton>
-                          </ModalDetails>
-                        </ModalInfo>
-                      </Modal>
+                      <CreateModal
+                        visible={visible2}
+                        dismiss={hideModal2}
+                        hourFormatted={hourFormatted}
+                        service={service}
+                        user={morningUser}
+                      />
                     </Portal>
                     <AppointmentInfo>
                       {morningUser.avatar_url ? (
@@ -324,37 +268,15 @@ const BarberDashboard: React.FC = () => {
               <Title>Agendamentos da tarde :</Title>
               {afternoonAppointments.map(
                 ({ user: afternoonUser, id, hourFormatted, service }) => (
-                  <NextAppointment key={id} onPress={showModal}>
+                  <NextAppointment key={id} onPress={showModal3}>
                     <Portal>
-                      <Modal
-                        visible={visible}
-                        onDismiss={hideModal}
-                        contentContainerStyle={modalStyle}>
-                        <ModalTitle>Detalhes do agendamento :</ModalTitle>
-                        <ModalInfo>
-                          {afternoonUser.avatar_url ? (
-                            <AppointmentAvatar
-                              source={{ uri: afternoonUser.avatar_url }}
-                            />
-                          ) : (
-                            <Avatar.Text
-                              color="#fff"
-                              style={{
-                                backgroundColor: '#ff9000',
-                              }}
-                              label={afternoonUser.name[0]}
-                            />
-                          )}
-                          <ModalDetails>
-                            <ModalUser>Cliente: {afternoonUser.name}</ModalUser>
-                            <ModalService>Serviço: {service}</ModalService>
-                            <ModalDate>Horário: {hourFormatted}</ModalDate>
-                            <ModalButton onPress={hideModal}>
-                              <TextBtn>Voltar</TextBtn>
-                            </ModalButton>
-                          </ModalDetails>
-                        </ModalInfo>
-                      </Modal>
+                      <CreateModal
+                        visible={visible3}
+                        dismiss={hideModal3}
+                        hourFormatted={hourFormatted}
+                        service={service}
+                        user={afternoonUser}
+                      />
                     </Portal>
                     <AppointmentInfo>
                       {afternoonUser.avatar_url ? (
