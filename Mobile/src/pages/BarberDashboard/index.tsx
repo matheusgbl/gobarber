@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable import/no-duplicates */
 import { useNavigation } from '@react-navigation/native';
 import { format, isAfter, parseISO } from 'date-fns';
