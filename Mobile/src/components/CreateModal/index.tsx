@@ -3,6 +3,8 @@ import React from 'react';
 
 import { Avatar, Modal } from 'react-native-paper';
 
+import Icon from 'react-native-vector-icons/AntDesign';
+
 import {
   ModalTitle,
   ModalAvatar,
@@ -11,8 +13,6 @@ import {
   ModalUser,
   ModalService,
   ModalDate,
-  ModalButton,
-  TextBtn,
 } from './styles';
 
 interface ModalProps {
@@ -47,6 +47,16 @@ export const CreateModal: React.FC<ModalProps> = ({
       visible={visible}
       onDismiss={dismiss}
       contentContainerStyle={modalStyle}>
+      <Icon
+        name="close"
+        onPress={dismiss}
+        size={20}
+        color="#ff9000"
+        style={{
+          marginLeft: 'auto',
+          bottom: 10,
+        }}
+      />
       <ModalTitle>Detalhes do agendamento :</ModalTitle>
       <ModalInfo>
         {user.avatar_url ? (
@@ -56,6 +66,7 @@ export const CreateModal: React.FC<ModalProps> = ({
             color="#fff"
             style={{
               backgroundColor: '#ff9000',
+              bottom: 12,
             }}
             label={user.name[0]}
           />
@@ -64,9 +75,6 @@ export const CreateModal: React.FC<ModalProps> = ({
           <ModalUser>Cliente: {user.name}</ModalUser>
           <ModalService>Serviço: {service}</ModalService>
           <ModalDate>Horário: {hourFormatted}</ModalDate>
-          <ModalButton onPress={dismiss}>
-            <TextBtn>Voltar</TextBtn>
-          </ModalButton>
         </ModalDetails>
       </ModalInfo>
     </Modal>

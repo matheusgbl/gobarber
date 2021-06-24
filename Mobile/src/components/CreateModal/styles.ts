@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { RectButton } from 'react-native-gesture-handler';
 
 export const ModalTitle = styled.Text`
   text-align: center;
@@ -33,17 +32,5 @@ export const ModalService = styled.Text`
 `;
 
 export const ModalDate = styled.Text`
-  color: #fff;
-`;
-
-export const ModalButton = styled(RectButton)`
-  align-items: center;
-  background: #ff9000;
-  top: 15px;
-  padding: 2px 12px;
-  border-radius: 7px;
-`;
-
-export const TextBtn = styled.Text`
   color: #fff;
 `;
