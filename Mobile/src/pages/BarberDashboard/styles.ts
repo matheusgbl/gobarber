@@ -59,49 +59,6 @@ export const DateText = styled.Text`
   margin-bottom: 15px;
 `;
 
-export const ModalTitle = styled.Text`
-  text-align: center;
-  width: 350px;
-  color: #fff;
-  bottom: 10px;
-`;
-
-export const ModalInfo = styled.View`
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-`;
-
-export const ModalDetails = styled.View`
-  align-items: center;
-  justify-content: center;
-  width: 230px;
-`;
-
-export const ModalUser = styled.Text`
-  color: #fff;
-`;
-
-export const ModalService = styled.Text`
-  color: #fff;
-`;
-
-export const ModalDate = styled.Text`
-  color: #fff;
-`;
-
-export const ModalButton = styled(RectButton)`
-  align-items: center;
-  background: #ff9000;
-  top: 15px;
-  padding: 2px 12px;
-  border-radius: 7px;
-`;
-
-export const TextBtn = styled.Text`
-  color: #fff;
-`;
-
 export const TextAppointment = styled.Text`
   padding: 20px 30px;
   color: #fff;
@@ -115,37 +72,6 @@ export const NextAppointment = styled(RectButton)`
   opacity: 0.9;
   border-radius: 10px;
   margin-bottom: 10px;
-`;
-
-export const AppointmentInfo = styled.View`
-  padding: 20px 30px;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-`;
-
-export const AppointmentAbout = styled.View`
-  align-items: center;
-`;
-
-export const AppointmentAvatar = styled.Image`
-  width: 60px;
-`;
-
-export const AppointmentName = styled.Text`
-  font-size: 14px;
-  color: #fff;
-`;
-
-export const AppointmentHour = styled.Text`
-  font-size: 14px;
-  color: #fff;
-`;
-
-export const AppointmentDetails = styled.Text`
-  font-size: 12px;
-  font-weight: bold;
-  color: #ff9000;
 `;
 
 export const NextAppointmentContainer = styled.View``;

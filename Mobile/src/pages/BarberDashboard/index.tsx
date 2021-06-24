@@ -12,6 +12,7 @@ import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
 import { CreateModal } from '../../components/CreateModal';
+import { AppointmentInfo } from '../../components/AppointmentInfo';
 
 import {
   Container,
@@ -25,12 +26,6 @@ import {
   Title,
   NextAppointmentContainer,
   TextAppointment,
-  AppointmentInfo,
-  AppointmentName,
-  AppointmentHour,
-  AppointmentAbout,
-  AppointmentDetails,
-  AppointmentAvatar,
   NextAppointment,
   MorningAppointmentsContainer,
   AfternoonAppointmentsContainer,
@@ -186,33 +181,10 @@ const BarberDashboard: React.FC = () => {
                       user={nextAppointment.user}
                     />
                   </Portal>
-                  <AppointmentInfo>
-                    {nextAppointment.user.avatar_url ? (
-                      <AppointmentAvatar
-                        source={{ uri: nextAppointment.user.avatar_url }}
-                      />
-                    ) : (
-                      <Avatar.Text
-                        color="#fff"
-                        style={{
-                          backgroundColor: '#ff9000',
-                          left: -10,
-                        }}
-                        label={nextAppointment.user.name[0]}
-                      />
-                    )}
-                    <AppointmentAbout>
-                      <AppointmentName>
-                        Cliente: {nextAppointment.user.name}
-                      </AppointmentName>
-                      <AppointmentHour>
-                        Horário: {nextAppointment.hourFormatted}
-                      </AppointmentHour>
-                      <AppointmentDetails>
-                        Toque para mais informações !
-                      </AppointmentDetails>
-                    </AppointmentAbout>
-                  </AppointmentInfo>
+                  <AppointmentInfo
+                    user={nextAppointment.user}
+                    hourFormatted={nextAppointment.hourFormatted}
+                  />
                 </NextAppointment>
               ) : (
                 <TextAppointment style={{ fontSize: 13 }}>
@@ -235,30 +207,10 @@ const BarberDashboard: React.FC = () => {
                         user={morningUser}
                       />
                     </Portal>
-                    <AppointmentInfo>
-                      {morningUser.avatar_url ? (
-                        <AppointmentAvatar
-                          source={{ uri: morningUser.avatar_url }}
-                        />
-                      ) : (
-                        <Avatar.Text
-                          color="#fff"
-                          style={{ backgroundColor: '#ff9000', left: -10 }}
-                          label={morningUser.name[0]}
-                        />
-                      )}
-                      <AppointmentAbout>
-                        <AppointmentName>
-                          Cliente: {morningUser.name}
-                        </AppointmentName>
-                        <AppointmentHour>
-                          Horário: {hourFormatted}
-                        </AppointmentHour>
-                        <AppointmentDetails>
-                          Toque para mais informações !
-                        </AppointmentDetails>
-                      </AppointmentAbout>
-                    </AppointmentInfo>
+                    <AppointmentInfo
+                      user={morningUser}
+                      hourFormatted={hourFormatted}
+                    />
                   </NextAppointment>
                 )
               )}
@@ -278,30 +230,10 @@ const BarberDashboard: React.FC = () => {
                         user={afternoonUser}
                       />
                     </Portal>
-                    <AppointmentInfo>
-                      {afternoonUser.avatar_url ? (
-                        <AppointmentAvatar
-                          source={{ uri: afternoonUser.avatar_url }}
-                        />
-                      ) : (
-                        <Avatar.Text
-                          color="#fff"
-                          style={{ backgroundColor: '#ff9000', left: -10 }}
-                          label={afternoonUser.name[0]}
-                        />
-                      )}
-                      <AppointmentAbout>
-                        <AppointmentName>
-                          Cliente: {afternoonUser.name}
-                        </AppointmentName>
-                        <AppointmentHour>
-                          Horário: {hourFormatted}
-                        </AppointmentHour>
-                        <AppointmentDetails>
-                          Toque para mais informações !
-                        </AppointmentDetails>
-                      </AppointmentAbout>
-                    </AppointmentInfo>
+                    <AppointmentInfo
+                      user={afternoonUser}
+                      hourFormatted={hourFormatted}
+                    />
                   </NextAppointment>
                 )
               )}
