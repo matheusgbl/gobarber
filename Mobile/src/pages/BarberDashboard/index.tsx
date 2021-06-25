@@ -64,23 +64,25 @@ const BarberDashboard: React.FC = () => {
   const hideModal3 = () => setVisible3(false);
 
   useEffect(() => {
-    api
-      .get<Appointment[]>('/appointments/me', {
-        params: {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate(),
-        },
-      })
-      .then((response) => {
-        const appointmentsFormatted = response.data.map((appointment) => {
-          return {
-            ...appointment,
-            hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
-          };
+    setTimeout(() => {
+      api
+        .get<Appointment[]>('/appointments/me', {
+          params: {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+          },
+        })
+        .then((response) => {
+          const appointmentsFormatted = response.data.map((appointment) => {
+            return {
+              ...appointment,
+              hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+            };
+          });
+          setAppointments(appointmentsFormatted);
         });
-        setAppointments(appointmentsFormatted);
-      });
+    }, 1000);
   }, [date]);
 
   const todayDateAsText = useMemo(() => {
@@ -182,7 +184,7 @@ const BarberDashboard: React.FC = () => {
               style={{
                 color: '#ff9000',
                 marginRight: 'auto',
-                paddingRight: 20,
+                paddingLeft: 20,
                 bottom: 35,
               }}
             />
