@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { format, isAfter, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Avatar, Provider, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../hooks/auth';
@@ -48,11 +48,11 @@ const BarberDashboard: React.FC = () => {
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const [today] = useState(new Date());
+  const [date, setDate] = useState(new Date());
+
   const [visible1, setVisible1] = useState(false);
   const [visible2, setVisible2] = useState(false);
   const [visible3, setVisible3] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
 
   const showModal1 = () => setVisible1(true);
   const hideModal1 = () => setVisible1(false);
@@ -63,22 +63,13 @@ const BarberDashboard: React.FC = () => {
   const showModal3 = () => setVisible3(true);
   const hideModal3 = () => setVisible3(false);
 
-  const wait = (timeout: number) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
   useEffect(() => {
     api
       .get<Appointment[]>('/appointments/me', {
         params: {
-          year: today.getFullYear(),
-          month: today.getMonth() + 1,
-          day: today.getDate(),
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
         },
       })
       .then((response) => {
@@ -90,13 +81,13 @@ const BarberDashboard: React.FC = () => {
         });
         setAppointments(appointmentsFormatted);
       });
-  }, [today]);
+  }, [date]);
 
   const todayDateAsText = useMemo(() => {
-    return format(today, "'Dia' dd 'de' MMMM 'de' yyyy", {
+    return format(date, "'Dia' dd 'de' MMMM 'de' yyyy", {
       locale: ptBR,
     });
-  }, [today]);
+  }, [date]);
 
   const morningAppointments = useMemo(() => {
     return appointments.filter((appointment) => {
@@ -126,13 +117,20 @@ const BarberDashboard: React.FC = () => {
     navigate('Profile');
   }, [navigate]);
 
+  const nextDay = useCallback(() => {
+    const dt = new Date();
+    dt.setTime(dt.getTime() + 24 * 60 * 60 * 1000);
+    setDate(dt);
+  }, []);
+
+  const prevDay = useCallback(() => {
+    const dt = new Date();
+    setDate(dt);
+  }, []);
+
   return (
     <Container>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Header>
           <ProfileButton onPress={navigateToProfile}>
             {user.avatar_url ? (
@@ -150,7 +148,6 @@ const BarberDashboard: React.FC = () => {
             {'\n'}
             <UserName>{user.name}</UserName>
           </HeaderTitle>
-
           <Icon
             name="logout"
             onPress={signOut}
@@ -165,6 +162,31 @@ const BarberDashboard: React.FC = () => {
         <AppointmentContainer>
           <Title>Agendamentos</Title>
           <DateText>{todayDateAsText}</DateText>
+          {date.getDate() === new Date().getDate() ? (
+            <Icon
+              name="right"
+              size={20}
+              onPress={nextDay}
+              style={{
+                color: '#ff9000',
+                marginLeft: 'auto',
+                paddingRight: 20,
+                bottom: 35,
+              }}
+            />
+          ) : (
+            <Icon
+              name="left"
+              size={20}
+              onPress={prevDay}
+              style={{
+                color: '#ff9000',
+                marginRight: 'auto',
+                paddingRight: 20,
+                bottom: 35,
+              }}
+            />
+          )}
 
           <Provider>
             <NextAppointmentContainer>

@@ -57,6 +57,7 @@ export const DateText = styled.Text`
   color: #fff;
   font-size: 16px;
   margin-bottom: 15px;
+  text-align: center;
 `;
 
 export const TextAppointment = styled.Text`
