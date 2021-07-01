@@ -4,7 +4,12 @@ import { format, isAfter, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView } from 'react-native';
-import { Avatar, Provider, Portal } from 'react-native-paper';
+import {
+  Avatar,
+  Provider,
+  Portal,
+  ActivityIndicator,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../hooks/auth';
 
@@ -59,6 +64,7 @@ const BarberDashboard: React.FC = () => {
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedService, setSelectedService] = useState<ModalProps[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [date, setDate] = useState(new Date());
 
@@ -67,6 +73,8 @@ const BarberDashboard: React.FC = () => {
   const hideModal = () => setVisible(false);
 
   useEffect(() => {
+    setAppointments([]);
+    setLoading(true);
     setTimeout(() => {
       api
         .get<Appointment[]>('/appointments/me', {
@@ -85,6 +93,7 @@ const BarberDashboard: React.FC = () => {
           });
           setAppointments(appointmentsFormatted);
         });
+      setLoading(false);
     }, 1000);
   }, [date]);
 
@@ -247,9 +256,7 @@ const BarberDashboard: React.FC = () => {
                   />
                 </NextAppointment>
               ) : (
-                <TextAppointment style={{ fontSize: 13 }}>
-                  Não há agendamentos para hoje!
-                </TextAppointment>
+                <ActivityIndicator animating={loading} color="#ff9000" />
               )}
             </NextAppointmentContainer>
 
