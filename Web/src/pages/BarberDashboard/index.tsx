@@ -10,7 +10,12 @@ import {
   AiOutlinePoweroff,
   AiOutlineUser,
 } from 'react-icons/ai';
+
+import { ClockLoader } from 'react-spinners';
+import { css } from '@emotion/react';
+
 import { Link } from 'react-router-dom';
+
 import {
   Container,
   Header,
@@ -47,6 +52,9 @@ interface Appointment {
 const BarberDashboard: React.FC = () => {
   const { signOut, user } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [color] = useState('#ff9000');
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [monthAvailability, setMonthAvailability] = useState<
@@ -79,23 +87,28 @@ const BarberDashboard: React.FC = () => {
   }, [currentMonth, user.id]);
 
   useEffect(() => {
-    api
-      .get<Appointment[]>('/appointments/me', {
-        params: {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth() + 1,
-          day: selectedDate.getDate(),
-        },
-      })
-      .then(response => {
-        const appointmentsFormatted = response.data.map(appointment => {
-          return {
-            ...appointment,
-            hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
-          };
+    setAppointments([]);
+    setLoading(true);
+    setTimeout(() => {
+      api
+        .get<Appointment[]>('/appointments/me', {
+          params: {
+            year: selectedDate.getFullYear(),
+            month: selectedDate.getMonth() + 1,
+            day: selectedDate.getDate(),
+          },
+        })
+        .then(response => {
+          const appointmentsFormatted = response.data.map(appointment => {
+            return {
+              ...appointment,
+              hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+            };
+          });
+          setAppointments(appointmentsFormatted);
+          setLoading(false);
         });
-        setAppointments(appointmentsFormatted);
-      });
+    }, 1500);
   }, [selectedDate]);
 
   const disableDays = useMemo(() => {
@@ -131,7 +144,10 @@ const BarberDashboard: React.FC = () => {
 
   const afternoonAppointments = useMemo(() => {
     return appointments.filter(appointment => {
-      return parseISO(appointment.date).getHours() >= 12;
+      return (
+        parseISO(appointment.date).getHours() >= 12 &&
+        parseISO(appointment.date).getHours() > new Date().getHours()
+      );
     });
   }, [appointments]);
 
@@ -140,6 +156,11 @@ const BarberDashboard: React.FC = () => {
       isAfter(parseISO(appointment.date), new Date()),
     );
   }, [appointments]);
+
+  const override = css`
+    display: block;
+    margin: 90px auto;
+  `;
 
   return (
     <Container>
@@ -187,20 +208,37 @@ const BarberDashboard: React.FC = () => {
             <span>{selectedWeekDay}</span>
           </p>
 
+          <ClockLoader
+            loading={loading}
+            color={color}
+            css={override}
+            size={150}
+          />
+
           {isToday(selectedDate) && nextAppointment && (
             <NextAppointment>
               <strong>Próximo agendamento</strong>
-              <div>
-                <img
-                  src={nextAppointment.user.avatar_url}
-                  alt={nextAppointment.user.name}
-                />
+              <section>
+                {nextAppointment.user.avatar_url ? (
+                  <img
+                    src={nextAppointment.user.avatar_url}
+                    alt={nextAppointment.user.name}
+                  />
+                ) : (
+                  <Avatar
+                    name={nextAppointment.user.name}
+                    alt={nextAppointment.user.name}
+                    className="random-avatar"
+                    unstyled
+                  />
+                )}
+
                 <strong>{nextAppointment.user.name}</strong>
                 <span>
                   <AiOutlineClockCircle />
                   {nextAppointment.hourFormatted}
                 </span>
-              </div>
+              </section>
             </NextAppointment>
           )}
 
@@ -218,13 +256,25 @@ const BarberDashboard: React.FC = () => {
                   {appointment.hourFormatted}
                 </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
+                <section>
+                  {appointment.user.avatar_url ? (
+                    <img
+                      src={appointment.user.avatar_url}
+                      alt={appointment.user.name}
+                    />
+                  ) : (
+                    <Avatar
+                      name={appointment.user.name}
+                      alt={appointment.user.name}
+                      className="random-avatar"
+                      unstyled
+                    />
+                  )}
+
                   <strong>{appointment.user.name}</strong>
-                </div>
+                  <span>Tipo de serviço:</span>
+                  <span>{appointment.service}</span>
+                </section>
               </Appointment>
             ))}
           </Section>
@@ -243,17 +293,24 @@ const BarberDashboard: React.FC = () => {
                   {appointment.hourFormatted}
                 </span>
 
-                <div>
-                  <img
-                    src={appointment.user.avatar_url}
-                    alt={appointment.user.name}
-                  />
-
+                <section>
+                  {appointment.user.avatar_url ? (
+                    <img
+                      src={appointment.user.avatar_url}
+                      alt={appointment.user.name}
+                    />
+                  ) : (
+                    <Avatar
+                      name={appointment.user.name}
+                      alt={appointment.user.name}
+                      className="random-avatar"
+                      unstyled
+                    />
+                  )}
                   <strong>{appointment.user.name}</strong>
-
                   <span>Tipo de serviço:</span>
                   <span>{appointment.service}</span>
-                </div>
+                </section>
               </Appointment>
             ))}
           </Section>

@@ -132,7 +132,7 @@ export const NextAppointment = styled.div`
     font-weight: 400;
   }
 
-  div {
+  section {
     background: #3e3b47;
     display: flex;
     align-items: center;
@@ -148,6 +148,23 @@ export const NextAppointment = styled.div`
       width: 2px;
       left: 0;
       background: #ff9000;
+    }
+
+    .random-avatar {
+      display: flex;
+      width: 60px;
+      height: 60px;
+      padding: 14px 13px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: #ff9000;
+
+      span {
+        display: flex;
+        margin-left: 15px;
+        font-size: 20px;
+      }
     }
 
     img {
@@ -215,15 +232,32 @@ export const Appointment = styled.div`
     }
   }
 
-  div {
+  section {
     flex: 1;
     background: #3e3b47;
     max-height: 90px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
-    padding: 16px 24px;
     border-radius: 10px;
     margin-left: 24px;
+
+    .random-avatar {
+      display: flex;
+      width: 60px;
+      height: 60px;
+      padding: 14px 13px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: #ff9000;
+
+      span {
+        display: flex;
+        margin-left: 15px;
+        font-size: 20px;
+      }
+    }
 
     img {
       width: 60px;
