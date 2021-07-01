@@ -59,8 +59,8 @@ export const CreateModal: React.FC<ModalProps> = ({
       />
       <ModalTitle>Detalhes do agendamento :</ModalTitle>
       <ModalInfo>
-        {user.avatar_url ? (
-          <ModalAvatar source={{ uri: user.avatar_url }} />
+        {user?.avatar_url ? (
+          <ModalAvatar source={{ uri: user?.avatar_url }} />
         ) : (
           <Avatar.Text
             color="#fff"
@@ -68,11 +68,11 @@ export const CreateModal: React.FC<ModalProps> = ({
               backgroundColor: '#ff9000',
               bottom: 12,
             }}
-            label={user.name[0]}
+            label={user?.name[0]}
           />
         )}
         <ModalDetails>
-          <ModalUser>Cliente: {user.name}</ModalUser>
+          <ModalUser>Cliente: {user?.name}</ModalUser>
           <ModalService>Serviço: {service}</ModalService>
           <ModalDate>Horário: {hourFormatted}</ModalDate>
         </ModalDetails>

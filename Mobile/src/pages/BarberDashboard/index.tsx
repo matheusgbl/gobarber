@@ -41,27 +41,30 @@ interface Appointment {
   };
 }
 
+interface ModalProps {
+  id: string;
+  service: string;
+  hourFormatted: string;
+  date: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  };
+}
+
 const BarberDashboard: React.FC = () => {
   const { navigate } = useNavigation();
 
   const { user, signOut } = useAuth();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [selectedService, setSelectedService] = useState<ModalProps[]>([]);
 
   const [date, setDate] = useState(new Date());
 
-  const [visible1, setVisible1] = useState(false);
-  const [visible2, setVisible2] = useState(false);
-  const [visible3, setVisible3] = useState(false);
+  const [visible, setVisible] = useState(false);
 
-  const showModal1 = () => setVisible1(true);
-  const hideModal1 = () => setVisible1(false);
-
-  const showModal2 = () => setVisible2(true);
-  const hideModal2 = () => setVisible2(false);
-
-  const showModal3 = () => setVisible3(true);
-  const hideModal3 = () => setVisible3(false);
+  const hideModal = () => setVisible(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -81,6 +84,28 @@ const BarberDashboard: React.FC = () => {
             };
           });
           setAppointments(appointmentsFormatted);
+        });
+    }, 1000);
+  }, [date]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      api
+        .get<ModalProps[]>('/appointments/me', {
+          params: {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            day: date.getDate(),
+          },
+        })
+        .then((response) => {
+          const appointmentsFormatted = response.data.map((appointment) => {
+            return {
+              ...appointment,
+              hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+            };
+          });
+          setSelectedService(appointmentsFormatted);
         });
     }, 1000);
   }, [date]);
@@ -128,6 +153,11 @@ const BarberDashboard: React.FC = () => {
   const prevDay = useCallback(() => {
     const dt = new Date();
     setDate(dt);
+  }, []);
+
+  const handleService = useCallback((data) => {
+    setSelectedService(data);
+    setVisible(true);
   }, []);
 
   return (
@@ -191,19 +221,26 @@ const BarberDashboard: React.FC = () => {
           )}
 
           <Provider>
+            {selectedService ? (
+              <Portal>
+                <CreateModal
+                  visible={visible}
+                  dismiss={hideModal}
+                  hourFormatted={selectedService?.hourFormatted}
+                  service={selectedService?.service}
+                  user={selectedService?.user}
+                />
+              </Portal>
+            ) : (
+              <></>
+            )}
+
             <NextAppointmentContainer>
               <TextAppointment>Próximo agendamento :</TextAppointment>
               {nextAppointment ? (
-                <NextAppointment key={nextAppointment.id} onPress={showModal1}>
-                  <Portal>
-                    <CreateModal
-                      visible={visible1}
-                      dismiss={hideModal1}
-                      hourFormatted={nextAppointment.hourFormatted}
-                      service={nextAppointment.service}
-                      user={nextAppointment.user}
-                    />
-                  </Portal>
+                <NextAppointment
+                  key={nextAppointment.id}
+                  onPress={() => handleService(nextAppointment)}>
                   <AppointmentInfo
                     user={nextAppointment.user}
                     hourFormatted={nextAppointment.hourFormatted}
@@ -218,48 +255,30 @@ const BarberDashboard: React.FC = () => {
 
             <MorningAppointmentsContainer>
               <Title>Agendamentos da manhã :</Title>
-              {morningAppointments.map(
-                ({ user: morningUser, id, hourFormatted, service }) => (
-                  <NextAppointment key={id} onPress={showModal2}>
-                    <Portal>
-                      <CreateModal
-                        visible={visible2}
-                        dismiss={hideModal2}
-                        hourFormatted={hourFormatted}
-                        service={service}
-                        user={morningUser}
-                      />
-                    </Portal>
-                    <AppointmentInfo
-                      user={morningUser}
-                      hourFormatted={hourFormatted}
-                    />
-                  </NextAppointment>
-                )
-              )}
+              {morningAppointments.map((data) => (
+                <NextAppointment
+                  key={data.id}
+                  onPress={() => handleService(data)}>
+                  <AppointmentInfo
+                    user={data.user}
+                    hourFormatted={data.hourFormatted}
+                  />
+                </NextAppointment>
+              ))}
             </MorningAppointmentsContainer>
 
             <AfternoonAppointmentsContainer>
               <Title>Agendamentos da tarde :</Title>
-              {afternoonAppointments.map(
-                ({ user: afternoonUser, id, hourFormatted, service }) => (
-                  <NextAppointment key={id} onPress={showModal3}>
-                    <Portal>
-                      <CreateModal
-                        visible={visible3}
-                        dismiss={hideModal3}
-                        hourFormatted={hourFormatted}
-                        service={service}
-                        user={afternoonUser}
-                      />
-                    </Portal>
-                    <AppointmentInfo
-                      user={afternoonUser}
-                      hourFormatted={hourFormatted}
-                    />
-                  </NextAppointment>
-                )
-              )}
+              {afternoonAppointments.map((data) => (
+                <NextAppointment
+                  key={data.id}
+                  onPress={() => handleService(data)}>
+                  <AppointmentInfo
+                    user={data.user}
+                    hourFormatted={data.hourFormatted}
+                  />
+                </NextAppointment>
+              ))}
             </AfternoonAppointmentsContainer>
           </Provider>
         </AppointmentContainer>

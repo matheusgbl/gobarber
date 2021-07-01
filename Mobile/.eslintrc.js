@@ -35,6 +35,12 @@ module.exports = {
         "react-hooks/exhaustive-deps": "warn",
         "no-use-before-define": "off",
         "react/jsx-props-no-spreading": "off",
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine": "auto"
+          }
+        ],
         "camelcase": "off",
         "react/prop-types": "off",
         "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
