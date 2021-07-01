@@ -1,7 +1,15 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 import React, { useCallback, useRef, useState } from 'react';
-import { Image, ScrollView, TextInput, Alert, Switch } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  TextInput,
+  Alert,
+  Switch,
+  Platform,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
@@ -96,81 +104,89 @@ const SignIn: React.FC = () => {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flex: 1 }}>
-        <Background>
-          <Image
-            source={bgDetail}
-            style={{ top: 350, width: 360, height: 600 }}
-          />
-          <Container>
-            <TopBorder />
-            <Image source={logo} style={{ marginTop: 50 }} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'android' ? 'padding' : undefined}
+          style={{
+            flex: 1,
+            backfaceVisibility: 'hidden',
+          }}
+          enabled>
+          <Background>
+            <Image
+              source={bgDetail}
+              style={{ top: 350, width: 360, height: 600 }}
+            />
+            <Container>
+              <TopBorder />
+              <Image source={logo} style={{ marginTop: 50 }} />
 
-            <Title>Faça seu login</Title>
+              <Title>Faça seu login</Title>
 
-            <Form ref={formRef} onSubmit={handleSignIn}>
-              <Input
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                name="email"
-                icon="mail"
-                placeholder="E-mail"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  passwordInputRef.current?.focus();
-                }}
-              />
+              <Form ref={formRef} onSubmit={handleSignIn}>
+                <Input
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  name="email"
+                  icon="mail"
+                  placeholder="E-mail"
+                  returnKeyType="next"
+                  onSubmitEditing={() => {
+                    passwordInputRef.current?.focus();
+                  }}
+                />
 
-              <Input
-                ref={passwordInputRef}
-                name="password"
-                icon="lock"
-                placeholder="Senha"
-                secureTextEntry
-                returnKeyType="send"
-                onSubmitEditing={() => {
-                  formRef.current?.submitForm();
-                }}
-              />
+                <Input
+                  ref={passwordInputRef}
+                  name="password"
+                  icon="lock"
+                  placeholder="Senha"
+                  secureTextEntry
+                  returnKeyType="send"
+                  onSubmitEditing={() => {
+                    formRef.current?.submitForm();
+                  }}
+                />
 
-              <Switch
-                trackColor={{ false: '#ccc', true: '#666360' }}
-                thumbColor={isEnabled ? '#ff9000' : '#fff'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-                style={{
-                  marginRight: 'auto',
-                  position: 'relative',
-                  display: 'flex',
-                  maxWidth: 100,
-                }}
-              />
-              <Label>Fazer login como barbeiro</Label>
+                <Switch
+                  trackColor={{ false: '#ccc', true: '#666360' }}
+                  thumbColor={isEnabled ? '#ff9000' : '#fff'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  style={{
+                    marginRight: 'auto',
+                    position: 'relative',
+                    display: 'flex',
+                    maxWidth: 100,
+                  }}
+                />
+                <Label>Fazer login como barbeiro</Label>
 
-              <Button
+                <Button
+                  onPress={() => {
+                    formRef.current?.submitForm();
+                  }}>
+                  Login
+                </Button>
+              </Form>
+
+              <ForgotPassword
                 onPress={() => {
-                  formRef.current?.submitForm();
+                  console.log('foi');
                 }}>
-                Login
-              </Button>
-            </Form>
-
-            <ForgotPassword
-              onPress={() => {
-                console.log('foi');
-              }}>
-              <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
-            </ForgotPassword>
-            <CreateAccount
-              onPress={() => {
-                navigation.navigate('SignUp');
-              }}>
-              <Icon name="adduser" size={20} color="#ff9000" />
-              <CreateAccountText>Criar uma conta</CreateAccountText>
-            </CreateAccount>
-          </Container>
-        </Background>
+                <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
+              </ForgotPassword>
+              <CreateAccount
+                onPress={() => {
+                  navigation.navigate('SignUp');
+                }}>
+                <Icon name="adduser" size={20} color="#ff9000" />
+                <CreateAccountText>Criar uma conta</CreateAccountText>
+              </CreateAccount>
+            </Container>
+          </Background>
+        </KeyboardAvoidingView>
       </ScrollView>
     </>
   );

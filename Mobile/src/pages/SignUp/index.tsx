@@ -1,5 +1,14 @@
-import React, { useCallback, useRef } from 'react';
-import { Image, ScrollView, TextInput, Alert } from 'react-native';
+/* eslint-disable no-param-reassign */
+import React, { useCallback, useRef, useState } from 'react';
+import {
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  TextInput,
+  Alert,
+  Switch,
+  Platform,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +28,7 @@ import {
   Container,
   TopBorder,
   Title,
+  Label,
   Back,
   BackText,
 } from './styles';
@@ -30,12 +40,16 @@ interface SignUpFormData {
   name: string;
   email: string;
   password: string;
+  isBarber: boolean;
 }
 
 const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const navigation = useNavigation();
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -51,7 +65,10 @@ const SignUp: React.FC = () => {
             .required('Email é obrigatório')
             .email('Digite um e-mail válido.'),
           password: Yup.string().min(6, 'Mínimo de 6 dígitos'),
+          isBarber: Yup.boolean(),
         });
+
+        data.isBarber = isEnabled;
 
         await schema.validate(data, {
           abortEarly: false,
@@ -80,7 +97,7 @@ const SignUp: React.FC = () => {
         );
       }
     },
-    [navigation]
+    [navigation, isEnabled]
   );
 
   return (
@@ -88,71 +105,94 @@ const SignUp: React.FC = () => {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flex: 1 }}>
-        <Background>
-          <Image
-            source={bgDetail}
-            style={{ top: 350, width: 360, height: 600 }}
-          />
-          <Container>
-            <TopBorder />
-            <Image source={logo} style={{ marginTop: 50 }} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'android' ? 'padding' : undefined}
+          style={{
+            flex: 1,
+            backfaceVisibility: 'hidden',
+          }}
+          enabled>
+          <Background>
+            <Image
+              source={bgDetail}
+              style={{ top: 350, width: 360, height: 600 }}
+            />
+            <Container>
+              <TopBorder />
+              <Image source={logo} style={{ marginTop: 50 }} />
 
-            <Title>Faça seu cadastro</Title>
+              <Title>Faça seu cadastro</Title>
 
-            <Form ref={formRef} onSubmit={handleSignUp}>
-              <Input
-                autoCapitalize="words"
-                name="name"
-                icon="user"
-                placeholder="Nome"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  emailInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={emailInputRef}
-                keyboardType="email-address"
-                autoCorrect={false}
-                autoCapitalize="none"
-                name="email"
-                icon="mail"
-                placeholder="E-mail"
-                returnKeyType="next"
-                onSubmitEditing={() => {
-                  passwordInputRef.current?.focus();
-                }}
-              />
-              <Input
-                ref={passwordInputRef}
-                name="password"
-                icon="lock"
-                placeholder="Senha"
-                secureTextEntry
-                textContentType="newPassword"
-                returnKeyType="send"
-                onSubmitEditing={() => {
-                  formRef.current?.submitForm();
-                }}
-              />
+              <Form ref={formRef} onSubmit={handleSignUp}>
+                <Input
+                  autoCapitalize="words"
+                  name="name"
+                  icon="user"
+                  placeholder="Nome"
+                  returnKeyType="next"
+                  onSubmitEditing={() => {
+                    emailInputRef.current?.focus();
+                  }}
+                />
+                <Input
+                  ref={emailInputRef}
+                  keyboardType="email-address"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  name="email"
+                  icon="mail"
+                  placeholder="E-mail"
+                  returnKeyType="next"
+                  onSubmitEditing={() => {
+                    passwordInputRef.current?.focus();
+                  }}
+                />
+                <Input
+                  ref={passwordInputRef}
+                  name="password"
+                  icon="lock"
+                  placeholder="Senha"
+                  secureTextEntry
+                  textContentType="newPassword"
+                  returnKeyType="send"
+                  onSubmitEditing={() => {
+                    formRef.current?.submitForm();
+                  }}
+                />
 
-              <Button
+                <Switch
+                  trackColor={{ false: '#ccc', true: '#666360' }}
+                  thumbColor={isEnabled ? '#ff9000' : '#fff'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  style={{
+                    marginRight: 'auto',
+                    position: 'relative',
+                    display: 'flex',
+                    maxWidth: 100,
+                  }}
+                />
+                <Label>Cadastrar-se como barbeiro</Label>
+
+                <Button
+                  onPress={() => {
+                    formRef.current?.submitForm();
+                  }}>
+                  Cadastrar
+                </Button>
+              </Form>
+
+              <Back
                 onPress={() => {
-                  formRef.current?.submitForm();
+                  navigation.navigate('SignIn');
                 }}>
-                Cadastrar
-              </Button>
-            </Form>
-
-            <Back
-              onPress={() => {
-                navigation.navigate('SignIn');
-              }}>
-              <Icon name="back" size={20} color="#ff9000" />
-              <BackText>Voltar para login</BackText>
-            </Back>
-          </Container>
-        </Background>
+                <Icon name="back" size={20} color="#ff9000" />
+                <BackText>Voltar para login</BackText>
+              </Back>
+            </Container>
+          </Background>
+        </KeyboardAvoidingView>
       </ScrollView>
     </>
   );
