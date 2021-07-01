@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import React, { useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
@@ -20,14 +19,13 @@ interface RouteParams {
 
 const AppointmentCreated: React.FC = () => {
   const { reset } = useNavigation();
-  const { user } = useAuth();
   const { params } = useRoute();
 
   const routeParams = params as RouteParams;
 
   const handleOkPressed = useCallback(() => {
     reset({
-      routes: [{ name: 'Dashboard' }],
+      routes: [{ name: 'UserDashboard' }],
       index: 0,
     });
   }, [reset]);
@@ -36,7 +34,9 @@ const AppointmentCreated: React.FC = () => {
     return format(
       routeParams.date,
       "EEEE', dia' dd 'de' MMMM 'de' yyyy 'às' HH:mm'h'",
-      { locale: ptBR },
+      {
+        locale: ptBR,
+      }
     );
   }, [routeParams.date]);
 
@@ -47,7 +47,7 @@ const AppointmentCreated: React.FC = () => {
       <Description>{formattedDate}</Description>
 
       <OkButton onPress={handleOkPressed}>
-        <OkButtonText>Ok</OkButtonText>
+        <OkButtonText>OK</OkButtonText>
       </OkButton>
     </Container>
   );

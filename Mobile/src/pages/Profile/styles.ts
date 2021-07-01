@@ -27,8 +27,8 @@ export const UserAvatarButton = styled.TouchableOpacity`
 `;
 
 export const UserAvatar = styled.Image`
-  width: 186px;
-  height: 186px;
+  width: 200px;
+  height: 200px;
   border-radius: 98px;
   align-self: center;
 `;

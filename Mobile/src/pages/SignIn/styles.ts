@@ -41,6 +41,14 @@ export const Title = styled.Text`
   margin: 54px 0 34px;
 `;
 
+export const Label = styled.Text`
+  color: #fff;
+  display: flex;
+  position: absolute;
+  bottom: 70px;
+  right: 10px;
+`;
+
 export const ForgotPassword = styled.TouchableOpacity`
   top: 24px;
 `;

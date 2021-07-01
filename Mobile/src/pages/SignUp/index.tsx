@@ -61,7 +61,7 @@ const SignUp: React.FC = () => {
 
         Alert.alert(
           'Cadastro realizado com sucesso.',
-          'Você já pode fazer login na aplicação.',
+          'Você já pode fazer login na aplicação.'
         );
 
         navigation.navigate('SignIn');
@@ -76,19 +76,18 @@ const SignUp: React.FC = () => {
 
         Alert.alert(
           'Erro ao fazer cadastro',
-          'Ocorreu um erro ao fazer o seu cadastro, verifique seus dados',
+          'Ocorreu um erro ao fazer o seu cadastro, verifique seus dados'
         );
       }
     },
-    [navigation],
+    [navigation]
   );
 
   return (
     <>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+        contentContainerStyle={{ flex: 1 }}>
         <Background>
           <Image
             source={bgDetail}
@@ -140,8 +139,7 @@ const SignUp: React.FC = () => {
               <Button
                 onPress={() => {
                   formRef.current?.submitForm();
-                }}
-              >
+                }}>
                 Cadastrar
               </Button>
             </Form>
@@ -149,8 +147,7 @@ const SignUp: React.FC = () => {
             <Back
               onPress={() => {
                 navigation.navigate('SignIn');
-              }}
-            >
+              }}>
               <Icon name="back" size={20} color="#ff9000" />
               <BackText>Voltar para login</BackText>
             </Back>

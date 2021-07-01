@@ -14,6 +14,7 @@ interface User {
   name: string;
   email: string;
   avatar_url: string;
+  isBarber: boolean;
 }
 
 interface AuthState {
@@ -24,6 +25,7 @@ interface AuthState {
 interface SignInCredentials {
   email: string;
   password: string;
+  isBarber: boolean;
 }
 
 interface AuthContextData {
@@ -59,10 +61,11 @@ const AuthProvider: React.FC = ({ children }) => {
     loadStoragedData();
   }, []);
 
-  const signIn = useCallback(async ({ email, password }) => {
+  const signIn = useCallback(async ({ email, password, isBarber }) => {
     const response = await api.post('sessions', {
       email,
       password,
+      isBarber,
     });
 
     const { token, user } = response.data;
@@ -92,13 +95,12 @@ const AuthProvider: React.FC = ({ children }) => {
         user,
       });
     },
-    [setData, data.token],
+    [setData, data.token]
   );
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, loading, signIn, signOut, updateUser }}
-    >
+      value={{ user: data.user, loading, signIn, signOut, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

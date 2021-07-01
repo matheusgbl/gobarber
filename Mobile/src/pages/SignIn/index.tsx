@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import React, { useCallback, useRef } from 'react';
-import { Image, ScrollView, TextInput, Alert } from 'react-native';
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-console */
+import React, { useCallback, useRef, useState } from 'react';
+import { Image, ScrollView, TextInput, Alert, Switch } from 'react-native';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
@@ -21,6 +22,7 @@ import {
   Container,
   TopBorder,
   Title,
+  Label,
   ForgotPassword,
   ForgotPasswordText,
   CreateAccount,
@@ -33,11 +35,15 @@ import bgDetail from '../../assets/bg_detail.png';
 interface SignInFormData {
   email: string;
   password: string;
+  isBarber: boolean;
 }
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const navigation = useNavigation();
 
@@ -53,7 +59,10 @@ const SignIn: React.FC = () => {
             .required('Email é obrigatório.')
             .email('Digite um e-mail válido.'),
           password: Yup.string().required('Senha inválida.'),
+          isBarber: Yup.boolean(),
         });
+
+        data.isBarber = isEnabled;
 
         await schema.validate(data, {
           abortEarly: false,
@@ -62,6 +71,7 @@ const SignIn: React.FC = () => {
         await signIn({
           email: data.email,
           password: data.password,
+          isBarber: data.isBarber,
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -74,19 +84,18 @@ const SignIn: React.FC = () => {
 
         Alert.alert(
           'Erro na autenticação',
-          'Ocorreu um erro ao tentar se conectar, por favor verifique seus dados e tente novamente.',
+          'Ocorreu um erro ao tentar se conectar, por favor verifique seus dados e tente novamente.'
         );
       }
     },
-    [signIn],
+    [signIn, isEnabled]
   );
 
   return (
     <>
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+        contentContainerStyle={{ flex: 1 }}>
         <Background>
           <Image
             source={bgDetail}
@@ -124,11 +133,25 @@ const SignIn: React.FC = () => {
                 }}
               />
 
+              <Switch
+                trackColor={{ false: '#ccc', true: '#666360' }}
+                thumbColor={isEnabled ? '#ff9000' : '#fff'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={isEnabled}
+                style={{
+                  marginRight: 'auto',
+                  position: 'relative',
+                  display: 'flex',
+                  maxWidth: 100,
+                }}
+              />
+              <Label>Fazer login como barbeiro</Label>
+
               <Button
                 onPress={() => {
                   formRef.current?.submitForm();
-                }}
-              >
+                }}>
                 Login
               </Button>
             </Form>
@@ -136,15 +159,13 @@ const SignIn: React.FC = () => {
             <ForgotPassword
               onPress={() => {
                 console.log('foi');
-              }}
-            >
+              }}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
             <CreateAccount
               onPress={() => {
                 navigation.navigate('SignUp');
-              }}
-            >
+              }}>
               <Icon name="adduser" size={20} color="#ff9000" />
               <CreateAccountText>Criar uma conta</CreateAccountText>
             </CreateAccount>
